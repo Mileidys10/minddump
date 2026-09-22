@@ -1,0 +1,307 @@
+<div class="app-layout" [class.is-auth-page]="isLoginRoute()">
+  <!-- Sidebar de Navegación (Desktop & Tablet) - Solo visible si no es login -->
+  @if (!isLoginRoute()) {
+    <aside class="app-sidebar glass" id="app-sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-header-row">
+          <div class="brand-icon">🧠</div>
+          <div class="brand-text">
+            <span class="brand-name">MindDump</span>
+            <span class="brand-tag">Segundo Cerebro</span>
+          </div>
+        </div>
+
+        <!-- Indicador de Nube Interactivo en Sidebar (C-06) -->
+        <button
+          type="button"
+          class="sidebar-sync-badge"
+          [class.syncing]="syncService.syncStatus() === 'syncing'"
+          [class.offline]="!syncService.isOnline()"
+          [class.error]="syncService.syncStatus() === 'error'"
+          (click)="onTriggerSync()"
+          [title]="getSyncTooltip()"
+          id="desktop-sync-status-btn"
+        >
+          <span class="sync-icon">{{ getSyncIcon() }}</span>
+          <span class="sync-label">{{ getSyncLabel() }}</span>
+          @if (syncService.pendingCount() > 0) {
+            <span class="sync-pending-chip">{{ syncService.pendingCount() }}</span>
+          }
+        </button>
+      </div>
+
+      <!-- Navegación Principal -->
+      <nav class="sidebar-nav">
+        <a routerLink="/inicio" routerLinkActive="active" class="nav-item" id="nav-desktop-inicio">
+          <span class="nav-icon">🏠</span>
+          <span class="nav-label">Inicio</span>
+        </a>
+
+        <a routerLink="/inbox" routerLinkActive="active" class="nav-item" id="nav-desktop-inbox">
+          <span class="nav-icon">📥</span>
+          <span class="nav-label">Inbox</span>
+        </a>
+
+        <a routerLink="/espacios" routerLinkActive="active" class="nav-item" id="nav-desktop-espacios">
+          <span class="nav-icon">🗂️</span>
+          <span class="nav-label">Espacios</span>
+        </a>
+
+        <a routerLink="/notas" routerLinkActive="active" class="nav-item" id="nav-desktop-notas">
+          <span class="nav-icon">📝</span>
+          <span class="nav-label">Notas</span>
+        </a>
+
+        <a routerLink="/tareas" routerLinkActive="active" class="nav-item" id="nav-desktop-tareas">
+          <span class="nav-icon">✅</span>
+          <span class="nav-label">Tareas</span>
+        </a>
+
+        <a routerLink="/eventos" routerLinkActive="active" class="nav-item" id="nav-desktop-eventos">
+          <span class="nav-icon">📅</span>
+          <span class="nav-label">Eventos</span>
+        </a>
+
+        <!-- Ítem permanente de Búsqueda (D-06 ✅) -->
+        <a routerLink="/busqueda" routerLinkActive="active" class="nav-item nav-item-search" id="nav-desktop-busqueda">
+          <span class="nav-icon">🔍</span>
+          <span class="nav-label">Búsqueda</span>
+        </a>
+      </nav>
+
+      <!-- Pie de Barra Lateral -->
+      <div class="sidebar-footer">
+        @if (authService.currentUser()) {
+          <div class="sidebar-user-pill">
+            <span class="user-avatar-mini">👤</span>
+            <div class="user-mini-info">
+              <span class="user-mini-name">{{ authService.currentUser()?.displayName }}</span>
+            </div>
+            <button
+              type="button"
+              class="user-logout-mini-btn"
+              (click)="onLogout()"
+              title="Cerrar sesión"
+            >
+              🚪
+            </button>
+          </div>
+        }
+
+        <a routerLink="/configuracion" routerLinkActive="active" class="nav-item" id="nav-desktop-configuracion">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-label">Configuración</span>
+        </a>
+      </div>
+    </aside>
+  }
+
+  <!-- Contenedor Principal -->
+  <div class="app-main-wrapper" [class.full-width]="isLoginRoute()">
+    <!-- Barra Superior Móvil - Solo visible si no es login -->
+    @if (!isLoginRoute()) {
+      <header class="mobile-header glass" id="mobile-header">
+        <div class="mobile-brand">
+          <span class="brand-icon">🧠</span>
+          <span class="brand-name">MindDump</span>
+        </div>
+        <div class="mobile-actions">
+          <!-- Botón de Nube en Móvil (C-06) -->
+          <button
+            type="button"
+            class="icon-btn sync-mobile-btn"
+            [class.syncing]="syncService.syncStatus() === 'syncing'"
+            [class.offline]="!syncService.isOnline()"
+            (click)="onTriggerSync()"
+            [title]="getSyncTooltip()"
+            id="mobile-sync-btn"
+          >
+            {{ getSyncIcon() }}
+          </button>
+          <a routerLink="/busqueda" class="icon-btn" id="mobile-search-btn" title="Buscar">
+            🔍
+          </a>
+          <a routerLink="/configuracion" class="icon-btn" id="mobile-config-btn" title="Configuración">
+            ⚙️
+          </a>
+        </div>
+      </header>
+    }
+
+    <!-- Área de Contenido de Vistas -->
+    <main class="app-content" id="main-content">
+      <app-pwa-update-banner />
+      <router-outlet></router-outlet>
+    </main>
+
+    <!-- Barra de Navegación Inferior (Móvil) - Solo visible si no es login -->
+    @if (!isLoginRoute()) {
+      <nav class="mobile-bottom-nav glass" id="mobile-bottom-nav">
+        <a routerLink="/inicio" routerLinkActive="active" class="mobile-nav-item" id="nav-mobile-inicio">
+          <span class="mobile-nav-icon">🏠</span>
+          <span class="mobile-nav-label">Inicio</span>
+        </a>
+
+        <a routerLink="/inbox" routerLinkActive="active" class="mobile-nav-item" id="nav-mobile-inbox">
+          <span class="mobile-nav-icon">📥</span>
+          <span class="mobile-nav-label">Inbox</span>
+        </a>
+
+        <!-- Botón Central Móvil + -->
+        <button
+          type="button"
+          class="mobile-fab-btn"
+          id="mobile-global-add-btn"
+          (click)="toggleQuickMenu()"
+          [class.is-open]="isQuickMenuOpen()"
+          title="Crear elemento"
+        >
+          <span class="fab-icon">+</span>
+        </button>
+
+        <a routerLink="/espacios" routerLinkActive="active" class="mobile-nav-item" id="nav-mobile-espacios">
+          <span class="mobile-nav-icon">🗂️</span>
+          <span class="mobile-nav-label">Espacios</span>
+        </a>
+
+        <!-- Búsqueda permanente en móvil (D-06 ✅) -->
+        <a routerLink="/busqueda" routerLinkActive="active" class="mobile-nav-item" id="nav-mobile-busqueda">
+          <span class="mobile-nav-icon">🔍</span>
+          <span class="mobile-nav-label">Buscar</span>
+        </a>
+      </nav>
+    }
+  </div>
+
+  @if (!isLoginRoute()) {
+    <!-- Botón Global Flotante (+) Visible en Todas las Pantallas (Desktop/Tablet) -->
+    <button
+      type="button"
+      class="desktop-fab-btn"
+      id="global-add-btn"
+      (click)="toggleQuickMenu()"
+      [class.is-open]="isQuickMenuOpen()"
+      title="Crear nuevo elemento (D-02)"
+    >
+      <span class="fab-icon">+</span>
+    </button>
+  }
+
+  <!-- Menú Desplegable Global de 4 Opciones (D-02 ✅) -->
+  @if (isQuickMenuOpen() && !isLoginRoute()) {
+    <div
+      class="quick-menu-backdrop"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Menú de creación rápida"
+    >
+      <button
+        type="button"
+        class="quick-menu-overlay"
+        (click)="closeQuickMenu()"
+        aria-label="Cerrar modal de creación rápida"
+      ></button>
+
+      <div class="quick-menu-modal glass" id="quick-creation-menu">
+        <div class="quick-menu-header">
+          <h3>Crear nuevo elemento</h3>
+          <button type="button" class="close-btn" (click)="closeQuickMenu()" aria-label="Cerrar modal">✕</button>
+        </div>
+
+        <div class="quick-menu-options">
+          <!-- 1. Captura rápida (Inbox) -->
+          <button
+            type="button"
+            class="menu-option-btn"
+            id="quick-option-inbox"
+            (click)="onQuickAction('inbox')"
+          >
+            <span class="option-icon" style="background: rgba(99, 102, 241, 0.2); color: #818cf8;">📥</span>
+            <div class="option-text">
+              <strong>Captura rápida</strong>
+              <small>Guarda un pensamiento o idea en el Inbox</small>
+            </div>
+          </button>
+
+          <!-- 2. Nueva nota -->
+          <button
+            type="button"
+            class="menu-option-btn"
+            id="quick-option-nota"
+            (click)="onQuickAction('nota')"
+          >
+            <span class="option-icon" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24;">📝</span>
+            <div class="option-text">
+              <strong>Nueva nota</strong>
+              <small>Documenta conocimiento con contenido detallado</small>
+            </div>
+          </button>
+
+          <!-- 3. Nueva tarea -->
+          <button
+            type="button"
+            class="menu-option-btn"
+            id="quick-option-tarea"
+            (click)="onQuickAction('tarea')"
+          >
+            <span class="option-icon" style="background: rgba(244, 63, 94, 0.2); color: #fb7185;">✅</span>
+            <div class="option-text">
+              <strong>Nueva tarea</strong>
+              <small>Crea un pendiente con prioridad y fecha límite</small>
+            </div>
+          </button>
+
+          <!-- 4. Nuevo evento -->
+          <button
+            type="button"
+            class="menu-option-btn"
+            id="quick-option-evento"
+            (click)="onQuickAction('evento')"
+          >
+            <span class="option-icon" style="background: rgba(6, 182, 212, 0.2); color: #22d3ee;">📅</span>
+            <div class="option-text">
+              <strong>Nuevo evento</strong>
+              <small>Programa un compromiso temporal en tu agenda</small>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Modales de Creación Rápida Global (T-03.2) -->
+  <app-captura-modal
+    [visible]="isCapturaModalOpen"
+    (guardar)="onGuardarCaptura($event)"
+    (cancelar)="closeCapturaModal()"
+  ></app-captura-modal>
+
+  @if (isNotaModalOpen) {
+    <app-nota-modal
+      [espacios]="espacios()"
+      (saved)="onGuardarNota($event)"
+      (cancelled)="closeNotaModal()"
+    ></app-nota-modal>
+  }
+
+  <app-tarea-modal
+    [visible]="isTareaModalOpen"
+    [espacios]="espacios()"
+    (guardar)="onGuardarTarea($event)"
+    (cancelar)="closeTareaModal()"
+  ></app-tarea-modal>
+
+  <app-evento-modal
+    [visible]="isEventoModalOpen"
+    [espacios]="espacios()"
+    (guardar)="onGuardarEvento($event)"
+    (cancelar)="closeEventoModal()"
+  ></app-evento-modal>
+
+  <!-- Modal Global de Permiso de Notificaciones (T-07.2) -->
+  <app-permiso-notificacion-modal
+    [visible]="notificacionService.mostrarModalExplicativo()"
+    (confirmar)="notificacionService.onConfirmarExplicacion()"
+    (cancelar)="notificacionService.onCancelarExplicacion()"
+  ></app-permiso-notificacion-modal>
+</div>

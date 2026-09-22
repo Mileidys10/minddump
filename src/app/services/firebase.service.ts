@@ -28,7 +28,12 @@ export class FirebaseService {
     try {
       const custom = localStorage.getItem(STORAGE_KEY_FIREBASE_CONFIG);
       if (custom) {
-        return JSON.parse(custom) as FirebaseConfig;
+        const parsed = JSON.parse(custom) as FirebaseConfig;
+        if (parsed.apiKey && !parsed.apiKey.includes('DemoKey') && parsed.projectId && !parsed.projectId.includes('minddump-sync')) {
+          return parsed;
+        } else {
+          localStorage.removeItem(STORAGE_KEY_FIREBASE_CONFIG);
+        }
       }
     } catch {
       // Ignorar errores de parsing

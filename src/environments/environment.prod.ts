@@ -5,6 +5,7 @@ export interface FirebaseConfig {
   storageBucket?: string;
   messagingSenderId?: string;
   appId?: string;
+  measurementId?: string;
 }
 
 export interface Environment {
@@ -15,11 +16,12 @@ export interface Environment {
 export const environment: Environment = {
   production: true,
   firebase: {
-    apiKey: 'AIzaSyMindDumpSyncAppLocalDemoKey12345',
-    authDomain: 'minddump-sync.firebaseapp.com',
-    projectId: 'minddump-sync',
-    storageBucket: 'minddump-sync.appspot.com',
-    messagingSenderId: '100000000001',
-    appId: '1:100000000001:web:a1b2c3d4e5f6g7h8i9j0'
+    apiKey: 'AIzaSyA0U49QbzgTrH0D6pVuMi6jm2yqM7ans5U',
+    authDomain: 'minddump-3ec4a.firebaseapp.com',
+    projectId: 'minddump-3ec4a',
+    storageBucket: 'minddump-3ec4a.firebasestorage.app',
+    messagingSenderId: '91029711598',
+    appId: '1:91029711598:web:3b3cd3088bfb7f9a1a21ff',
+    measurementId: 'G-XRSR30HFKC'
   }
 };

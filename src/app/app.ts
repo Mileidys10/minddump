@@ -77,7 +77,7 @@ export class App implements OnInit {
   }
 
   getSyncIcon(): string {
-    if (!this.syncService.isOnline()) return '📴';
+    if (!this.syncService.isOnline()) return '📡';
     switch (this.syncService.syncStatus()) {
       case 'syncing': return '🔄';
       case 'error': return '⚠️';
@@ -90,7 +90,7 @@ export class App implements OnInit {
     if (!this.syncService.isOnline()) return 'Offline';
     switch (this.syncService.syncStatus()) {
       case 'syncing': return 'Sincronizando...';
-      case 'error': return 'Sync pendiente';
+      case 'error': return 'Sync requerido';
       case 'synced': return 'Nube al día';
       default: return 'Sincronizar';
     }
@@ -99,6 +99,10 @@ export class App implements OnInit {
   getSyncTooltip(): string {
     if (!this.syncService.isOnline()) {
       return 'Sin conexión a internet. Los cambios se guardan localmente en tu dispositivo.';
+    }
+    const err = this.syncService.errorMessage();
+    if (this.syncService.syncStatus() === 'error' && err) {
+      return `${err} (Clic para reintentar)`;
     }
     const pending = this.syncService.pendingCount();
     if (pending > 0) {

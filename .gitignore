@@ -40,3 +40,10 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# Proteccion automatica de secretos de fabrica
+.env
+*.env
+.env.local
+credentials.json
+service_account.json

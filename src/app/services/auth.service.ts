@@ -34,9 +34,20 @@ export class AuthService {
     return this.currentUser() !== null || this.isOfflineGuest();
   });
 
+  /**
+   * Retorna true si es un usuario real autenticado vía Google en Firebase
+   */
   readonly isGoogleUser = computed(() => {
     const u = this.currentUser();
-    return !!u && u.uid !== 'guest-local-user' && !u.isAnonymous;
+    return !!u && u.uid !== 'guest-local-user' && u.uid !== 'demo-google-uid-12345' && !u.isAnonymous;
+  });
+
+  /**
+   * Retorna true si el usuario actual está en modo demo/prueba local
+   */
+  readonly isDemoUser = computed(() => {
+    const u = this.currentUser();
+    return !!u && u.uid === 'demo-google-uid-12345';
   });
 
   constructor() {
@@ -50,7 +61,6 @@ export class AuthService {
   private initAuthListener(): void {
     const auth = this.firebaseService.getAuth();
     if (!auth) {
-      // Si Firebase no está configurado, verificar si hay usuario demo previo
       const savedDemo = localStorage.getItem(STORAGE_KEY_DEMO_USER);
       if (savedDemo) {
         try {
@@ -133,10 +143,11 @@ export class AuthService {
       return true;
     } catch (err: any) {
       console.warn('[AuthService] Error al iniciar sesión con Google:', err);
-      // Errores comunes de Firebase Auth
       let mensaje = 'Error al iniciar sesión con Google.';
       if (err.code === 'auth/popup-closed-by-user') {
         mensaje = 'La ventana de inicio de sesión fue cerrada.';
+      } else if (err.code === 'auth/popup-blocked') {
+        mensaje = 'El navegador bloqueó la ventana emergente. Permite ventanas emergentes para MindDump.';
       } else if (err.code === 'auth/cancelled-popup-request') {
         mensaje = 'Solicitud de autenticación cancelada.';
       } else if (err.code === 'auth/api-key-not-valid' || err.code === 'auth/invalid-api-key') {

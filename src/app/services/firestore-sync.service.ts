@@ -4,8 +4,7 @@ import {
   doc,
   getDocs,
   setDoc,
-  deleteDoc,
-  Firestore
+  deleteDoc
 } from 'firebase/firestore';
 import { DatabaseService, generateSyncId } from '../repositories/database.service';
 import { AuthService } from './auth.service';
@@ -128,11 +127,16 @@ export class FirestoreSyncService {
 
     const firestore = this.firebaseService.getFirestore();
     const user = this.authService.currentUser();
-    const canPush = this.isOnline() && firestore && user && user.uid && user.uid !== 'guest-local-user';
+    const isGoogle = this.authService.isGoogleUser();
+    const canPush = this.isOnline() && firestore && user && user.uid && isGoogle;
 
     if (!canPush) {
-      // Marcar como pendiente localmente
-      if (item.id) {
+      // Modo demo o invitado local: se considera sincronizado localmente sin requerir Firestore
+      if (this.authService.isDemoUser() || this.authService.isOfflineGuest()) {
+        if (item.id) {
+          await table.update(item.id, { syncPending: false });
+        }
+      } else if (item.id) {
         await table.update(item.id, { syncPending: true });
       }
       await this.refreshPendingCount();
@@ -154,14 +158,25 @@ export class FirestoreSyncService {
       await this.refreshPendingCount();
       this.saveLastSyncTime(new Date().toISOString());
       this.syncStatus.set('synced');
+      this.errorMessage.set(null);
     } catch (err: any) {
-      console.warn(`[FirestoreSync] Error al subir ${entityName}/${item.syncId}:`, err);
+      const isPermission = err?.code === 'permission-denied' ||
+        (typeof err?.message === 'string' && err.message.toLowerCase().includes('permission'));
+
       if (item.id) {
         await table.update(item.id, { syncPending: true });
       }
       await this.refreshPendingCount();
       this.syncStatus.set('error');
-      this.errorMessage.set(err?.message || 'Error de conexión con la nube');
+
+      if (isPermission) {
+        console.warn(`[FirestoreSync] Permisos de Firestore no configurados en Firebase Console.`, err);
+        this.errorMessage.set('Reglas de Firestore no configuradas. Ve a Firebase Console > Firestore Database > Reglas y publica las reglas de acceso (revisa firestore.rules).');
+      } else {
+        console.warn(`[FirestoreSync] Error al subir ${entityName}/${item.syncId}:`, err);
+        this.errorMessage.set(err?.message || 'Error de conexión con la nube');
+      }
+      throw err;
     }
   }
 
@@ -172,59 +187,68 @@ export class FirestoreSyncService {
     const firestore = this.firebaseService.getFirestore();
     const user = this.authService.currentUser();
 
-    if (!firestore || !user || !user.uid || user.uid === 'guest-local-user' || !this.isOnline()) {
+    if (!firestore || !user || !user.uid || !this.authService.isGoogleUser() || !this.isOnline()) {
       return;
     }
 
-    const colRef = collection(firestore, `users/${user.uid}/${entityName}`);
-    const snapshot = await getDocs(colRef);
-    const table = this.dbService.db.table(entityName);
+    try {
+      const colRef = collection(firestore, `users/${user.uid}/${entityName}`);
+      const snapshot = await getDocs(colRef);
+      const table = this.dbService.db.table(entityName);
 
-    for (const docSnap of snapshot.docs) {
-      const cloudData = docSnap.data() as SyncableEntity;
-      const syncId = docSnap.id;
+      for (const docSnap of snapshot.docs) {
+        const cloudData = docSnap.data() as SyncableEntity;
+        const syncId = docSnap.id;
 
-      // Buscar ítem local por syncId
-      const localItem = await table.where('syncId').equals(syncId).first();
+        // Buscar ítem local por syncId
+        const localItem = await table.where('syncId').equals(syncId).first();
 
-      if (!localItem) {
-        // Si fue borrado en la nube, no lo insertamos
-        if (cloudData.deletedAt) {
-          continue;
-        }
-
-        // Nuevo ítem proveniente del otro dispositivo
-        const newItem = {
-          ...cloudData,
-          syncId,
-          syncPending: false
-        };
-        await table.add(newItem);
-      } else {
-        // Conflicto / Comparación de fechas
-        const localDate = localItem.fechaActualizacion || localItem.fechaCreacion || '1970-01-01T00:00:00.000Z';
-        const cloudDate = cloudData.fechaActualizacion || cloudData.fechaCreacion || '1970-01-01T00:00:00.000Z';
-
-        if (cloudData.deletedAt) {
-          // El otro dispositivo lo borró
-          if (localItem.id) {
-            await table.delete(localItem.id);
+        if (!localItem) {
+          if (cloudData.deletedAt) {
+            continue;
           }
-        } else if (new Date(cloudDate).getTime() > new Date(localDate).getTime()) {
-          // La versión en la nube es más reciente: gana la nube
-          if (localItem.id) {
-            const { id, ...updatedProps } = cloudData as any;
-            await table.update(localItem.id, {
-              ...updatedProps,
-              syncId,
-              syncPending: false
-            });
+          const newItem = {
+            ...cloudData,
+            syncId,
+            syncPending: false
+          };
+          await table.add(newItem);
+        } else {
+          const localDate = localItem.fechaActualizacion || localItem.fechaCreacion || '1970-01-01T00:00:00.000Z';
+          const cloudDate = cloudData.fechaActualizacion || cloudData.fechaCreacion || '1970-01-01T00:00:00.000Z';
+
+          if (cloudData.deletedAt) {
+            if (localItem.id) {
+              await table.delete(localItem.id);
+            }
+          } else if (new Date(cloudDate).getTime() > new Date(localDate).getTime()) {
+            if (localItem.id) {
+              const { id, ...updatedProps } = cloudData as any;
+              await table.update(localItem.id, {
+                ...updatedProps,
+                syncId,
+                syncPending: false
+              });
+            }
+          } else if (localItem.syncPending) {
+            try {
+              await this.pushToCloud(entityName, localItem);
+            } catch {
+              // Manejo silencioso en conflictos individuales
+            }
           }
-        } else if (localItem.syncPending) {
-          // La versión local es más reciente y estaba pendiente: subir a la nube
-          await this.pushToCloud(entityName, localItem);
         }
       }
+    } catch (err: any) {
+      const isPermission = err?.code === 'permission-denied' ||
+        (typeof err?.message === 'string' && err.message.toLowerCase().includes('permission'));
+      this.syncStatus.set('error');
+      if (isPermission) {
+        this.errorMessage.set('Reglas de Firestore no configuradas. Ve a Firebase Console > Firestore Database > Reglas y publica las reglas de acceso (revisa firestore.rules).');
+      } else {
+        this.errorMessage.set(err?.message || `Error al descargar ${entityName}`);
+      }
+      throw err;
     }
   }
 
@@ -235,7 +259,7 @@ export class FirestoreSyncService {
     const firestore = this.firebaseService.getFirestore();
     const user = this.authService.currentUser();
 
-    if (!firestore || !user || !user.uid || user.uid === 'guest-local-user' || !this.isOnline()) {
+    if (!firestore || !user || !user.uid || !this.authService.isGoogleUser() || !this.isOnline()) {
       return;
     }
 
@@ -245,7 +269,16 @@ export class FirestoreSyncService {
       const pendingItems = allItems.filter((i: any) => i.syncPending === true);
 
       for (const item of pendingItems) {
-        await this.pushToCloud(entityName, item);
+        try {
+          await this.pushToCloud(entityName, item);
+        } catch (err: any) {
+          const isPermission = err?.code === 'permission-denied' ||
+            (typeof err?.message === 'string' && err.message.toLowerCase().includes('permission'));
+          if (isPermission) {
+            // Detener el bucle inmediatamente para evitar inundación de consola
+            return;
+          }
+        }
       }
     }
   }
@@ -269,14 +302,15 @@ export class FirestoreSyncService {
       return false;
     }
 
-    // Modo demo o invitado local
-    if (user.uid === 'guest-local-user' || user.uid === 'demo-google-uid-12345') {
+    // Modo demo o invitado local: sincronización fluida simulada 100% offline
+    if (this.authService.isDemoUser() || this.authService.isOfflineGuest() || !this.authService.isGoogleUser()) {
       this.syncStatus.set('syncing');
-      await new Promise(r => setTimeout(r, 600)); // Simulación fluida
+      await new Promise(r => setTimeout(r, 400));
       const now = new Date().toISOString();
       this.saveLastSyncTime(now);
       this.pendingCount.set(0);
       this.syncStatus.set('synced');
+      this.errorMessage.set(null);
       this.syncRevision.update(r => r + 1);
       return true;
     }
@@ -295,6 +329,10 @@ export class FirestoreSyncService {
       // 1. Subir cambios locales pendientes acumulados en offline
       await this.pushPending();
 
+      if (this.syncStatus() === 'error') {
+        return false;
+      }
+
       // 2. Descargar cambios remotos para todas las entidades
       for (const entityName of SYNCABLE_TABLES) {
         await this.pullFromCloud(entityName);
@@ -304,12 +342,15 @@ export class FirestoreSyncService {
       this.saveLastSyncTime(now);
       await this.refreshPendingCount();
       this.syncStatus.set('synced');
+      this.errorMessage.set(null);
       this.syncRevision.update(r => r + 1);
       return true;
     } catch (err: any) {
       console.warn('[FirestoreSync] Error en syncAll:', err);
       this.syncStatus.set('error');
-      this.errorMessage.set(err?.message || 'Error durante la sincronización');
+      if (!this.errorMessage()) {
+        this.errorMessage.set(err?.message || 'Error durante la sincronización');
+      }
       return false;
     }
   }
@@ -327,8 +368,8 @@ export class FirestoreSyncService {
       await table.delete(item.id);
     }
 
-    // Si tiene syncId y hay sesión de Google en la nube, eliminar de Firestore
-    if (item.syncId && firestore && user && user.uid && user.uid !== 'guest-local-user' && this.isOnline()) {
+    // Si tiene syncId y hay sesión real de Google en la nube, eliminar de Firestore
+    if (item.syncId && firestore && user && user.uid && this.authService.isGoogleUser() && this.isOnline()) {
       try {
         const docRef = doc(firestore, `users/${user.uid}/${entityName}/${item.syncId}`);
         await deleteDoc(docRef);

@@ -29,14 +29,14 @@ import { TareaCreateDto } from '../../repositories/tarea.repository';
       <header class="view-header">
         <div>
           <span class="badge">Omnipresente (P-08)</span>
-          <h1 class="view-title">Búsqueda Global 🔍</h1>
+          <h1 class="view-title">Búsqueda Global</h1>
           <p class="view-subtitle">Encuentra notas, tareas y elementos sin clasificar en todo tu segundo cerebro.</p>
         </div>
       </header>
 
       <!-- Barra de Búsqueda -->
       <div class="search-box glass">
-        <span class="search-icon">🔍</span>
+        
         <input
           type="search"
           placeholder="Buscar por título, contenido o etiqueta..."
@@ -76,7 +76,7 @@ import { TareaCreateDto } from '../../repositories/tarea.repository';
             [class.active]="tipoFiltro() === 'nota'"
             (click)="setTipoFiltro('nota')"
           >
-            📝 Notas ({{ conteoNotas() }})
+            Notas ({{ conteoNotas() }})
           </button>
           <button
             type="button"
@@ -84,7 +84,7 @@ import { TareaCreateDto } from '../../repositories/tarea.repository';
             [class.active]="tipoFiltro() === 'tarea'"
             (click)="setTipoFiltro('tarea')"
           >
-            ✅ Tareas ({{ conteoTareas() }})
+            Tareas ({{ conteoTareas() }})
           </button>
         </div>
       </div>
@@ -99,7 +99,7 @@ import { TareaCreateDto } from '../../repositories/tarea.repository';
             [class.active]="espacioFiltro() === 'all'"
             (click)="setEspacioFiltro('all')"
           >
-            🌐 Todos los espacios
+            Todos los espacios
           </button>
           <button
             type="button"
@@ -107,7 +107,7 @@ import { TareaCreateDto } from '../../repositories/tarea.repository';
             [class.active]="espacioFiltro() === null"
             (click)="setEspacioFiltro(null)"
           >
-            🚫 Sin clasificar
+            Sin clasificar
           </button>
           @for (esp of espacios(); track esp.id) {
             <button
@@ -202,7 +202,7 @@ import { TareaCreateDto } from '../../repositories/tarea.repository';
                       </span>
                     } @else {
                       <span class="esp-pill sin-clasificar">
-                        🚫 Sin clasificar
+                        Sin clasificar
                       </span>
                     }
                   </div>

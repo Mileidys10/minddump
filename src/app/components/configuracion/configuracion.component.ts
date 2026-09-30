@@ -35,7 +35,7 @@ import { PwaUpdateBannerComponent } from './pwa-update-banner.component';
       <header class="view-header">
         <div>
           <span class="badge">Ajustes Generales (P-09 / E-12)</span>
-          <h1 class="view-title">Configuración ⚙️</h1>
+          <h1 class="view-title">Configuración</h1>
           <p class="view-subtitle">Cuenta de usuario, sincronización en la nube, personalización y almacenamiento local.</p>
         </div>
       </header>
@@ -129,7 +129,7 @@ import { PwaUpdateBannerComponent } from './pwa-update-banner.component';
                 id="btn-logout"
                 (click)="onCerrarSesion()"
               >
-                🚪 Cerrar sesión
+                Cerrar sesión
               </button>
             } @else {
               <button
@@ -138,7 +138,7 @@ import { PwaUpdateBannerComponent } from './pwa-update-banner.component';
                 id="btn-ir-login"
                 (click)="onIrALogin()"
               >
-                🔑 Conectar cuenta
+                Conectar cuenta
               </button>
             }
 
@@ -189,7 +189,7 @@ import { PwaUpdateBannerComponent } from './pwa-update-banner.component';
 
             <div class="config-action firebase-action-buttons">
               <button type="button" class="btn-action" (click)="guardarConfigFirebase()" id="btn-save-firebase-config">
-                💾 Guardar y Reiniciar
+                Guardar y Reiniciar
               </button>
               <button type="button" class="btn-action-secondary" (click)="restaurarDefaultFirebase()" id="btn-reset-firebase-config">
                 ↺ Restaurar por defecto
@@ -287,7 +287,7 @@ import { PwaUpdateBannerComponent } from './pwa-update-banner.component';
                 id="btn-tema-oscuro"
                 (click)="onSeleccionarTema('dark')"
               >
-                🌙 Modo Oscuro
+                Modo Oscuro
               </button>
               <button
                 type="button"
@@ -296,7 +296,7 @@ import { PwaUpdateBannerComponent } from './pwa-update-banner.component';
                 id="btn-tema-claro"
                 (click)="onSeleccionarTema('light')"
               >
-                ☀️ Modo Claro
+                Modo Claro
               </button>
             </div>
           </div>
@@ -348,7 +348,7 @@ import { PwaUpdateBannerComponent } from './pwa-update-banner.component';
                 id="btn-solicitar-permiso-notif"
                 (click)="onSolicitarPermiso()"
               >
-                🔔 Solicitar permiso
+                Solicitar permiso
               </button>
             } @else {
               <div class="notif-granted-container">
@@ -361,7 +361,7 @@ import { PwaUpdateBannerComponent } from './pwa-update-banner.component';
                     (click)="onProbarNotificacionInmediata()"
                     title="Envía una notificación de prueba en este instante"
                   >
-                    ⚡ Probar ahora
+                    Probar ahora
                   </button>
                   <button
                     type="button"
@@ -437,7 +437,7 @@ import { PwaUpdateBannerComponent } from './pwa-update-banner.component';
               id="btn-reset-data"
               (click)="abrirModalBorrado()"
             >
-              🗑️ Borrar todo
+              Borrar todo
             </button>
           </div>
         </section>

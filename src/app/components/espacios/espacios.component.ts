@@ -15,7 +15,7 @@ import { EspacioDeleteModalComponent } from './espacio-delete-modal.component';
       <header class="view-header">
         <div>
           <span class="badge">Organización</span>
-          <h1 class="view-title">Espacios 🗂️</h1>
+          <h1 class="view-title">Espacios</h1>
           <p class="view-subtitle">Contenedores de contexto para tus notas, tareas y eventos.</p>
         </div>
         <button
@@ -67,7 +67,7 @@ import { EspacioDeleteModalComponent } from './espacio-delete-modal.component';
                   [id]="'btn-view-espacio-' + espacio.id"
                   title="Ver contenido del espacio"
                 >
-                  📁 Ver
+                  Ver
                 </a>
 
                 <button
@@ -77,7 +77,7 @@ import { EspacioDeleteModalComponent } from './espacio-delete-modal.component';
                   (click)="openEditModal(espacio)"
                   title="Editar espacio"
                 >
-                  ✏️ Editar
+                  Editar
                 </button>
 
                 <!-- El espacio Útiles NO muestra opción de eliminar (T-02.4) -->
@@ -89,7 +89,7 @@ import { EspacioDeleteModalComponent } from './espacio-delete-modal.component';
                     (click)="openDeleteModal(espacio)"
                     title="Eliminar espacio"
                   >
-                    🗑️ Eliminar
+                    Eliminar
                   </button>
                 }
               </div>

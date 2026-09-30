@@ -30,7 +30,7 @@ import { TareaCreateDto } from '../../repositories/tarea.repository';
               {{ inboxService.totalPendientes() }} pendiente{{ inboxService.totalPendientes() === 1 ? '' : 's' }}
             </span>
           </div>
-          <h1 class="view-title">Inbox 📥</h1>
+          <h1 class="view-title">Inbox</h1>
           <p class="view-subtitle">
             Tus pensamientos e ideas sin procesar. Captura primero, organiza después.
           </p>
@@ -75,7 +75,7 @@ import { TareaCreateDto } from '../../repositories/tarea.repository';
                   (click)="openConvertModal(item)"
                   title="Convertir en Nota o Tarea"
                 >
-                  🔄 Convertir
+                  Convertir
                 </button>
                 <button
                   type="button"
@@ -84,7 +84,7 @@ import { TareaCreateDto } from '../../repositories/tarea.repository';
                   (click)="openEditModal(item)"
                   title="Editar captura"
                 >
-                  ✏️
+                  Editar
                 </button>
                 <button
                   type="button"
@@ -93,7 +93,7 @@ import { TareaCreateDto } from '../../repositories/tarea.repository';
                   (click)="openDeleteModal(item)"
                   title="Eliminar captura"
                 >
-                  🗑️
+                  Eliminar
                 </button>
               </footer>
             </article>
@@ -102,7 +102,7 @@ import { TareaCreateDto } from '../../repositories/tarea.repository';
       } @else {
         <!-- Estado Vacío -->
         <div class="empty-state glass" id="inbox-empty-state">
-          <div class="empty-icon">📭</div>
+          <div class="empty-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg></div>
           <h3>Inbox limpio y al día</h3>
           <p>
             No tienes pensamientos pendientes de organizar. Usa el botón de abajo o el botón global

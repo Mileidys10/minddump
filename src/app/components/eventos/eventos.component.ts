@@ -23,7 +23,7 @@ import { EventoDetalleModalComponent } from './evento-detalle-modal.component';
       <header class="view-header">
         <div class="header-left">
           <span class="badge-tag">Agenda & Cronología</span>
-          <h1 class="view-title">Eventos 📅</h1>
+          <h1 class="view-title">Eventos</h1>
           <p class="view-subtitle">Gestiona tus citas, compromisos temporales y reuniones.</p>
         </div>
 
@@ -176,7 +176,7 @@ import { EventoDetalleModalComponent } from './evento-detalle-modal.component';
                     (click)="$event.stopPropagation(); abrirModalEditar(evento)"
                     [id]="'btn-editar-evento-' + evento.id"
                   >
-                    ✏️
+                    Editar
                   </button>
                   <button
                     type="button"
@@ -185,7 +185,7 @@ import { EventoDetalleModalComponent } from './evento-detalle-modal.component';
                     (click)="$event.stopPropagation(); abrirModalEliminar(evento)"
                     [id]="'btn-eliminar-evento-' + evento.id"
                   >
-                    🗑️
+                    Eliminar
                   </button>
                 </div>
               </article>

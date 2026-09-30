@@ -1,10 +1,16 @@
 <div class="app-layout" [class.is-auth-page]="isLoginRoute()">
-  <!-- Sidebar de Navegación (Desktop & Tablet) - Solo visible si no es login -->
+  <!-- Sidebar de Navegacion (Desktop & Tablet) - Solo visible si no es login -->
   @if (!isLoginRoute()) {
-    <aside class="app-sidebar glass" id="app-sidebar">
+    <aside class="app-sidebar" id="app-sidebar">
       <div class="sidebar-brand">
         <div class="brand-header-row">
-          <div class="brand-icon">🧠</div>
+          <div class="brand-icon-box">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2a4 4 0 0 1 4 4c0 1.1-.4 2.1-1.1 2.8C16.8 9.8 18 11.8 18 14a6 6 0 1 1-12 0c0-2.2 1.2-4.2 3.1-5.2C8.4 8.1 8 7.1 8 6a4 4 0 0 1 4-4z"/>
+              <path d="M12 14v4"/>
+              <circle cx="12" cy="14" r="2"/>
+            </svg>
+          </div>
           <div class="brand-text">
             <span class="brand-name">MindDump</span>
             <span class="brand-tag">Segundo Cerebro</span>
@@ -22,7 +28,16 @@
           [title]="getSyncTooltip()"
           id="desktop-sync-status-btn"
         >
-          <span class="sync-icon">{{ getSyncIcon() }}</span>
+          <span class="sync-status-dot"></span>
+          @if (!syncService.isOnline()) {
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 2 20 20"/><path d="M5.782 5.782A7 7 0 0 0 9 19h8.5a4.5 4.5 0 0 0 1.307-.193"/><path d="M21.532 16.5A4.5 4.5 0 0 0 17.5 10h-1.79A7.008 7.008 0 0 0 10 5.07"/></svg>
+          } @else if (syncService.syncStatus() === 'syncing') {
+            <svg class="spin-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg>
+          } @else if (syncService.syncStatus() === 'error') {
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          } @else {
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/><path d="m9 13 2 2 4-4"/></svg>
+          }
           <span class="sync-label">{{ getSyncLabel() }}</span>
           @if (syncService.pendingCount() > 0) {
             <span class="sync-pending-chip">{{ syncService.pendingCount() }}</span>
@@ -30,42 +45,55 @@
         </button>
       </div>
 
-      <!-- Navegación Principal -->
+      <!-- Navegacion Principal -->
       <nav class="sidebar-nav">
         <a routerLink="/inicio" routerLinkActive="active" class="nav-item" id="nav-desktop-inicio">
-          <span class="nav-icon">🏠</span>
+          <span class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </span>
           <span class="nav-label">Inicio</span>
         </a>
 
         <a routerLink="/inbox" routerLinkActive="active" class="nav-item" id="nav-desktop-inbox">
-          <span class="nav-icon">📥</span>
+          <span class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+          </span>
           <span class="nav-label">Inbox</span>
         </a>
 
         <a routerLink="/espacios" routerLinkActive="active" class="nav-item" id="nav-desktop-espacios">
-          <span class="nav-icon">🗂️</span>
+          <span class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/></svg>
+          </span>
           <span class="nav-label">Espacios</span>
         </a>
 
         <a routerLink="/notas" routerLinkActive="active" class="nav-item" id="nav-desktop-notas">
-          <span class="nav-icon">📝</span>
+          <span class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
+          </span>
           <span class="nav-label">Notas</span>
         </a>
 
         <a routerLink="/tareas" routerLinkActive="active" class="nav-item" id="nav-desktop-tareas">
-          <span class="nav-icon">✅</span>
+          <span class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m9 12 2 2 4-4"/></svg>
+          </span>
           <span class="nav-label">Tareas</span>
         </a>
 
         <a routerLink="/eventos" routerLinkActive="active" class="nav-item" id="nav-desktop-eventos">
-          <span class="nav-icon">📅</span>
+          <span class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </span>
           <span class="nav-label">Eventos</span>
         </a>
 
-        <!-- Ítem permanente de Búsqueda (D-06 ✅) -->
         <a routerLink="/busqueda" routerLinkActive="active" class="nav-item nav-item-search" id="nav-desktop-busqueda">
-          <span class="nav-icon">🔍</span>
-          <span class="nav-label">Búsqueda</span>
+          <span class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          </span>
+          <span class="nav-label">Busqueda</span>
         </a>
       </nav>
 
@@ -73,24 +101,27 @@
       <div class="sidebar-footer">
         @if (authService.currentUser()) {
           <div class="sidebar-user-pill">
-            <span class="user-avatar-mini">👤</span>
+            <div class="user-avatar-initials">{{ getUserInitials() }}</div>
             <div class="user-mini-info">
-              <span class="user-mini-name">{{ authService.currentUser()?.displayName }}</span>
+              <span class="user-mini-name">{{ authService.currentUser()?.displayName || 'Usuario' }}</span>
+              <span class="user-mini-email">{{ authService.currentUser()?.email }}</span>
             </div>
             <button
               type="button"
               class="user-logout-mini-btn"
               (click)="onLogout()"
-              title="Cerrar sesión"
+              title="Cerrar sesion"
             >
-              🚪
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
             </button>
           </div>
         }
 
         <a routerLink="/configuracion" routerLinkActive="active" class="nav-item" id="nav-desktop-configuracion">
-          <span class="nav-icon">⚙️</span>
-          <span class="nav-label">Configuración</span>
+          <span class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+          </span>
+          <span class="nav-label">Configuracion</span>
         </a>
       </div>
     </aside>
@@ -98,15 +129,21 @@
 
   <!-- Contenedor Principal -->
   <div class="app-main-wrapper" [class.full-width]="isLoginRoute()">
-    <!-- Barra Superior Móvil - Solo visible si no es login -->
+    <!-- Barra Superior Movil - Solo visible si no es login -->
     @if (!isLoginRoute()) {
-      <header class="mobile-header glass" id="mobile-header">
+      <header class="mobile-header" id="mobile-header">
         <div class="mobile-brand">
-          <span class="brand-icon">🧠</span>
+          <div class="brand-icon-box mobile-brand-box">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2a4 4 0 0 1 4 4c0 1.1-.4 2.1-1.1 2.8C16.8 9.8 18 11.8 18 14a6 6 0 1 1-12 0c0-2.2 1.2-4.2 3.1-5.2C8.4 8.1 8 7.1 8 6a4 4 0 0 1 4-4z"/>
+              <path d="M12 14v4"/>
+              <circle cx="12" cy="14" r="2"/>
+            </svg>
+          </div>
           <span class="brand-name">MindDump</span>
         </div>
         <div class="mobile-actions">
-          <!-- Botón de Nube en Móvil (C-06) -->
+          <!-- Boton de Nube en Movil -->
           <button
             type="button"
             class="icon-btn sync-mobile-btn"
@@ -116,38 +153,42 @@
             [title]="getSyncTooltip()"
             id="mobile-sync-btn"
           >
-            {{ getSyncIcon() }}
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/><path d="m9 13 2 2 4-4"/></svg>
           </button>
           <a routerLink="/busqueda" class="icon-btn" id="mobile-search-btn" title="Buscar">
-            🔍
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
           </a>
-          <a routerLink="/configuracion" class="icon-btn" id="mobile-config-btn" title="Configuración">
-            ⚙️
+          <a routerLink="/configuracion" class="icon-btn" id="mobile-config-btn" title="Configuracion">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
           </a>
         </div>
       </header>
     }
 
-    <!-- Área de Contenido de Vistas -->
+    <!-- Area de Contenido de Vistas -->
     <main class="app-content" id="main-content">
       <app-pwa-update-banner />
       <router-outlet></router-outlet>
     </main>
 
-    <!-- Barra de Navegación Inferior (Móvil) - Solo visible si no es login -->
+    <!-- Barra de Navegacion Inferior (Movil) - Solo visible si no es login -->
     @if (!isLoginRoute()) {
-      <nav class="mobile-bottom-nav glass" id="mobile-bottom-nav">
+      <nav class="mobile-bottom-nav" id="mobile-bottom-nav">
         <a routerLink="/inicio" routerLinkActive="active" class="mobile-nav-item" id="nav-mobile-inicio">
-          <span class="mobile-nav-icon">🏠</span>
+          <span class="mobile-nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </span>
           <span class="mobile-nav-label">Inicio</span>
         </a>
 
         <a routerLink="/inbox" routerLinkActive="active" class="mobile-nav-item" id="nav-mobile-inbox">
-          <span class="mobile-nav-icon">📥</span>
+          <span class="mobile-nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+          </span>
           <span class="mobile-nav-label">Inbox</span>
         </a>
 
-        <!-- Botón Central Móvil + -->
+        <!-- Boton Central Movil + -->
         <button
           type="button"
           class="mobile-fab-btn"
@@ -156,17 +197,20 @@
           [class.is-open]="isQuickMenuOpen()"
           title="Crear elemento"
         >
-          <span class="fab-icon">+</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         </button>
 
         <a routerLink="/espacios" routerLinkActive="active" class="mobile-nav-item" id="nav-mobile-espacios">
-          <span class="mobile-nav-icon">🗂️</span>
+          <span class="mobile-nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/></svg>
+          </span>
           <span class="mobile-nav-label">Espacios</span>
         </a>
 
-        <!-- Búsqueda permanente en móvil (D-06 ✅) -->
         <a routerLink="/busqueda" routerLinkActive="active" class="mobile-nav-item" id="nav-mobile-busqueda">
-          <span class="mobile-nav-icon">🔍</span>
+          <span class="mobile-nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          </span>
           <span class="mobile-nav-label">Buscar</span>
         </a>
       </nav>
@@ -174,51 +218,55 @@
   </div>
 
   @if (!isLoginRoute()) {
-    <!-- Botón Global Flotante (+) Visible en Todas las Pantallas (Desktop/Tablet) -->
+    <!-- Boton Global Flotante (+) Visible en Todas las Pantallas (Desktop/Tablet) -->
     <button
       type="button"
       class="desktop-fab-btn"
       id="global-add-btn"
       (click)="toggleQuickMenu()"
       [class.is-open]="isQuickMenuOpen()"
-      title="Crear nuevo elemento (D-02)"
+      title="Crear nuevo elemento"
     >
-      <span class="fab-icon">+</span>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
     </button>
   }
 
-  <!-- Menú Desplegable Global de 4 Opciones (D-02 ✅) -->
+  <!-- Menu Desplegable Global de 4 Opciones -->
   @if (isQuickMenuOpen() && !isLoginRoute()) {
     <div
       class="quick-menu-backdrop"
       role="dialog"
       aria-modal="true"
-      aria-label="Menú de creación rápida"
+      aria-label="Menu de creacion rapida"
     >
       <button
         type="button"
         class="quick-menu-overlay"
         (click)="closeQuickMenu()"
-        aria-label="Cerrar modal de creación rápida"
+        aria-label="Cerrar modal de creacion rapida"
       ></button>
 
-      <div class="quick-menu-modal glass" id="quick-creation-menu">
+      <div class="quick-menu-modal" id="quick-creation-menu">
         <div class="quick-menu-header">
           <h3>Crear nuevo elemento</h3>
-          <button type="button" class="close-btn" (click)="closeQuickMenu()" aria-label="Cerrar modal">✕</button>
+          <button type="button" class="close-btn" (click)="closeQuickMenu()" aria-label="Cerrar modal">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
         </div>
 
         <div class="quick-menu-options">
-          <!-- 1. Captura rápida (Inbox) -->
+          <!-- 1. Captura rapida (Inbox) -->
           <button
             type="button"
             class="menu-option-btn"
             id="quick-option-inbox"
             (click)="onQuickAction('inbox')"
           >
-            <span class="option-icon" style="background: rgba(99, 102, 241, 0.2); color: #818cf8;">📥</span>
+            <span class="option-icon" style="background: rgba(129, 140, 248, 0.12); color: #818cf8;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+            </span>
             <div class="option-text">
-              <strong>Captura rápida</strong>
+              <strong>Captura rapida</strong>
               <small>Guarda un pensamiento o idea en el Inbox</small>
             </div>
           </button>
@@ -230,7 +278,9 @@
             id="quick-option-nota"
             (click)="onQuickAction('nota')"
           >
-            <span class="option-icon" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24;">📝</span>
+            <span class="option-icon" style="background: rgba(251, 191, 36, 0.12); color: #fbbf24;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
+            </span>
             <div class="option-text">
               <strong>Nueva nota</strong>
               <small>Documenta conocimiento con contenido detallado</small>
@@ -244,10 +294,12 @@
             id="quick-option-tarea"
             (click)="onQuickAction('tarea')"
           >
-            <span class="option-icon" style="background: rgba(244, 63, 94, 0.2); color: #fb7185;">✅</span>
+            <span class="option-icon" style="background: rgba(52, 211, 153, 0.12); color: #34d399;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m9 12 2 2 4-4"/></svg>
+            </span>
             <div class="option-text">
               <strong>Nueva tarea</strong>
-              <small>Crea un pendiente con prioridad y fecha límite</small>
+              <small>Crea un pendiente con prioridad y fecha limite</small>
             </div>
           </button>
 
@@ -258,7 +310,9 @@
             id="quick-option-evento"
             (click)="onQuickAction('evento')"
           >
-            <span class="option-icon" style="background: rgba(6, 182, 212, 0.2); color: #22d3ee;">📅</span>
+            <span class="option-icon" style="background: rgba(56, 189, 248, 0.12); color: #38bdf8;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </span>
             <div class="option-text">
               <strong>Nuevo evento</strong>
               <small>Programa un compromiso temporal en tu agenda</small>
@@ -269,7 +323,7 @@
     </div>
   }
 
-  <!-- Modales de Creación Rápida Global (T-03.2) -->
+  <!-- Modales de Creacion Rapida Global -->
   <app-captura-modal
     [visible]="isCapturaModalOpen"
     (guardar)="onGuardarCaptura($event)"
@@ -298,7 +352,7 @@
     (cancelar)="closeEventoModal()"
   ></app-evento-modal>
 
-  <!-- Modal Global de Permiso de Notificaciones (T-07.2) -->
+  <!-- Modal Global de Permiso de Notificaciones -->
   <app-permiso-notificacion-modal
     [visible]="notificacionService.mostrarModalExplicativo()"
     (confirmar)="notificacionService.onConfirmarExplicacion()"

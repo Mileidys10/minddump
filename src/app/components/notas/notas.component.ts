@@ -22,7 +22,7 @@ import { NotaDeleteModalComponent } from './nota-delete-modal.component';
       <header class="view-header">
         <div>
           <span class="badge">Conocimiento</span>
-          <h1 class="view-title">Notas 📝</h1>
+          <h1 class="view-title">Notas</h1>
           <p class="view-subtitle">Ideas, referencias y reflexiones organizadas por espacio.</p>
         </div>
 
@@ -53,7 +53,7 @@ import { NotaDeleteModalComponent } from './nota-delete-modal.component';
             id="btn-open-create-nota"
             (click)="openCreateModal()"
           >
-            <span class="btn-icon">+</span> Nueva Nota
+            + Nueva Nota
           </button>
         </div>
       </header>
@@ -131,7 +131,7 @@ import { NotaDeleteModalComponent } from './nota-delete-modal.component';
                     (click)="$event.stopPropagation(); openEditModal(nota)"
                     title="Editar nota"
                   >
-                    ✏️ Editar
+                    Editar Editar
                   </button>
                   <button
                     type="button"
@@ -140,7 +140,7 @@ import { NotaDeleteModalComponent } from './nota-delete-modal.component';
                     (click)="$event.stopPropagation(); openDeleteModal(nota)"
                     title="Eliminar nota"
                   >
-                    🗑️
+                    Eliminar
                   </button>
                 </div>
               </div>

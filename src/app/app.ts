@@ -76,24 +76,24 @@ export class App implements OnInit {
     return this.router.url.includes('/login');
   }
 
-  getSyncIcon(): string {
-    if (!this.syncService.isOnline()) return '📡';
-    switch (this.syncService.syncStatus()) {
-      case 'syncing': return '🔄';
-      case 'error': return '⚠️';
-      case 'synced': return '☁️';
-      default: return '☁️';
-    }
-  }
-
-  getSyncLabel(): string {
-    if (!this.syncService.isOnline()) return 'Offline';
+    getSyncLabel(): string {
+    if (!this.syncService.isOnline()) return 'Sin conexión';
     switch (this.syncService.syncStatus()) {
       case 'syncing': return 'Sincronizando...';
       case 'error': return 'Sync requerido';
       case 'synced': return 'Nube al día';
-      default: return 'Sincronizar';
+      default: return 'Sincronizado';
     }
+  }
+
+  getUserInitials(): string {
+    const user = this.authService.currentUser();
+    const name = user?.displayName || user?.email || 'MA';
+    const parts = name.trim().split(/\s+/);
+    if (parts.length >= 2 && parts[0] && parts[1]) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return name.slice(0, 2).toUpperCase();
   }
 
   getSyncTooltip(): string {

@@ -33,7 +33,7 @@ import { TareaCreateDto } from '../../repositories/tarea.repository';
               </span>
             }
           </div>
-          <h1 class="view-title">Tareas ✅</h1>
+          <h1 class="view-title">Tareas</h1>
           <p class="view-subtitle">
             Acciones pendientes organizadas por prioridad y fecha límite en tu espacio actual.
           </p>
@@ -169,7 +169,7 @@ import { TareaCreateDto } from '../../repositories/tarea.repository';
                     (click)="$event.stopPropagation(); openEditModal(tarea)"
                     title="Editar tarea"
                   >
-                    ✏️
+                    Editar
                   </button>
                   <button
                     type="button"
@@ -178,7 +178,7 @@ import { TareaCreateDto } from '../../repositories/tarea.repository';
                     (click)="$event.stopPropagation(); openDeleteModal(tarea)"
                     title="Eliminar tarea"
                   >
-                    🗑️
+                    Eliminar
                   </button>
                 </div>
               </article>
@@ -194,7 +194,7 @@ import { TareaCreateDto } from '../../repositories/tarea.repository';
               class="btn-empty-action"
               (click)="openCreateModal()"
             >
-              ➕ Crear nueva tarea
+              + Crear nueva tarea
             </button>
           </div>
         }
@@ -211,7 +211,7 @@ import { TareaCreateDto } from '../../repositories/tarea.repository';
           >
             <span class="collapse-icon">{{ showFinalizadas() ? '▼' : '▶' }}</span>
             <h2 id="section-finalized-title" class="section-title">
-              🏁 Tareas Finalizadas
+              Tareas Finalizadas
               <span class="count-badge muted">{{ tareaService.tareasFinalizadas().length }}</span>
             </h2>
           </button>
@@ -272,7 +272,7 @@ import { TareaCreateDto } from '../../repositories/tarea.repository';
                       (click)="$event.stopPropagation(); openEditModal(tarea)"
                       title="Editar tarea"
                     >
-                      ✏️
+                      Editar
                     </button>
                     <button
                       type="button"
@@ -281,7 +281,7 @@ import { TareaCreateDto } from '../../repositories/tarea.repository';
                       (click)="$event.stopPropagation(); openDeleteModal(tarea)"
                       title="Eliminar tarea"
                     >
-                      🗑️
+                      Eliminar
                     </button>
                   </div>
                 </article>

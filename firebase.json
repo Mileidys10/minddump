@@ -1,19 +1,19 @@
 ﻿{
-   hosting: {
-    public: dist/minddump/browser,
-    ignore: [
-      firebase.json,
-      **/.*,
-      **/node_modules/**
+  "hosting": {
+    "public": "dist/minddump/browser",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
     ],
-    rewrites: [
+    "rewrites": [
       {
-        source: **,
-        destination: /index.html
+        "source": "**",
+        "destination": "/index.html"
       }
     ]
   },
-  firestore: {
-    rules: firestore.rules
+  "firestore": {
+    "rules": "firestore.rules"
   }
 }

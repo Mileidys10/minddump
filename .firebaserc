@@ -1,5 +1,5 @@
 ﻿{
-   projects: {
-    default: minddump-3ec4a
+  "projects": {
+    "default": "minddump-app-agamez"
   }
 }

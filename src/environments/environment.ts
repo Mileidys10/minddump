@@ -1,4 +1,4 @@
-export interface FirebaseConfig {
+﻿export interface FirebaseConfig {
   apiKey: string;
   authDomain: string;
   projectId: string;
@@ -16,12 +16,11 @@ export interface Environment {
 export const environment: Environment = {
   production: false,
   firebase: {
-    apiKey: 'AIzaSyA0U49QbzgTrH0D6pVuMi6jm2yqM7ans5U',
-    authDomain: 'minddump-3ec4a.firebaseapp.com',
-    projectId: 'minddump-3ec4a',
-    storageBucket: 'minddump-3ec4a.firebasestorage.app',
-    messagingSenderId: '91029711598',
-    appId: '1:91029711598:web:3b3cd3088bfb7f9a1a21ff',
-    measurementId: 'G-XRSR30HFKC'
+    apiKey: 'AIzaSyCb0J21FLB2-4xJ0Qv_4QMjkpeFNeiZdg8',
+    authDomain: 'minddump-app-agamez.firebaseapp.com',
+    projectId: 'minddump-app-agamez',
+    storageBucket: 'minddump-app-agamez.firebasestorage.app',
+    messagingSenderId: '629498391848',
+    appId: '1:629498391848:web:082218fd7a6ecf8a3a341d'
   }
 };

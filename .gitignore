@@ -47,3 +47,6 @@ Thumbs.db
 .env.local
 credentials.json
 service_account.json
+
+# Firebase cache
+.firebase/

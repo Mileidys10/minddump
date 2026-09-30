@@ -1,4 +1,4 @@
-/* Layout Core */
+﻿/* Layout Core */
 .app-layout {
   display: flex;
   min-height: 100vh;
@@ -183,8 +183,9 @@
   width: 58px;
   height: 58px;
   border-radius: var(--radius-full);
-  background: linear-gradient(135deg, var(--primary), var(--accent-purple));
-  color: white;
+  background: #f4f4f5;
+  color: #09090b;
+  border: 1px solid rgba(255, 255, 255, 0.15);
   box-shadow: 0 8px 24px var(--primary-glow);
   display: flex;
   align-items: center;
@@ -197,7 +198,7 @@
 
 .desktop-fab-btn:hover {
   transform: scale(1.08) rotate(90deg);
-  box-shadow: 0 12px 32px rgba(99, 102, 241, 0.6);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
 }
 
 .desktop-fab-btn.is-open {
@@ -530,3 +531,4 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+

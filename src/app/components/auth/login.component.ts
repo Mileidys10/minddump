@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+﻿import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
@@ -11,51 +11,49 @@ import { FirebaseService } from '../../services/firebase.service';
   template: `
     <div class="login-container">
       <div class="login-card glass">
-        <!-- Encabezado de Marca -->
-        <div class="brand-header">
-          <div class="brand-badge">⚡ Cloud Sync</div>
-          <div class="brand-icon-wrapper">
-            <span class="brand-icon">🧠</span>
-          </div>
-          <h1 class="brand-title">MindDump</h1>
-          <p class="brand-subtitle">Tu Segundo Cerebro Digital</p>
+        <!-- Brand Header -->
+        <div class="brand-badge">
+          <span class="status-dot"></span>
+          <span>Cloud Sync &bull; Local-First</span>
         </div>
 
-        <!-- Propuesta de Valor -->
+        <div class="brand-icon-wrapper">
+          <span class="brand-icon">⚡</span>
+        </div>
+
+        <h1 class="brand-title">MindDump</h1>
+        <p class="brand-subtitle">Capturador cognitivo y sincronización de pensamiento</p>
+
+        <!-- Mensaje de Alerta si hay error -->
+        <div *ngIf="authService.authError()" class="alert alert-error">
+          <span class="alert-icon">⚠️</span>
+          <span>{{ authService.authError() }}</span>
+        </div>
+
+        <!-- Propuesta de Valor / Features -->
         <div class="features-list">
           <div class="feature-item">
-            <span class="feature-icon">📱</span>
+            <span class="feature-icon feature-emerald">⚡</span>
             <div class="feature-text">
-              <strong>Android en la U</strong>
-              <span>Anota rápido en clase sin preocuparte si hay internet.</span>
+              <strong>Offline &bull; Latencia Cero</strong>
+              <span>Tus ideas se guardan al instante en tu dispositivo</span>
             </div>
           </div>
 
           <div class="feature-item">
-            <span class="feature-icon">💻</span>
+            <span class="feature-icon feature-amber">☁️</span>
             <div class="feature-text">
-              <strong>PC en Casa</strong>
-              <span>Tus notas y tareas se sincronizan solas cuando te conectas.</span>
+              <strong>Sincronización en la Nube</strong>
+              <span>Conecta tus notas en tiempo real entre celular y PC</span>
             </div>
           </div>
 
           <div class="feature-item">
-            <span class="feature-icon">🛡️</span>
+            <span class="feature-icon feature-titanium">🔒</span>
             <div class="feature-text">
-              <strong>100% Offline-First</strong>
-              <span>Tus datos se guardan en tu dispositivo primero, siempre.</span>
+              <strong>Privacidad y Control</strong>
+              <span>Cifrado de extremo a extremo sin tarifas ni intermediarios</span>
             </div>
-          </div>
-        </div>
-
-        <!-- Mensaje de Error si ocurre -->
-        <div *ngIf="authService.authError()" class="alert alert-error" id="login-error-alert">
-          <span class="alert-icon">⚠️</span>
-          <div class="alert-content">
-            <p>{{ authService.authError() }}</p>
-            <small *ngIf="!firebaseService.isInitialized()">
-              Configura las credenciales de Firebase en Configuración o prueba el modo Demo.
-            </small>
           </div>
         </div>
 
@@ -68,7 +66,7 @@ import { FirebaseService } from '../../services/firebase.service';
             (click)="onLoginGoogle()"
             [disabled]="authService.isLoading()"
           >
-            <svg class="google-icon" viewBox="0 0 24 24" width="20" height="20">
+            <svg class="google-icon" viewBox="0 0 24 24" width="18" height="18">
               <path
                 fill="#4285F4"
                 d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.66v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.15z"
@@ -86,11 +84,11 @@ import { FirebaseService } from '../../services/firebase.service';
                 d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.35 0 3.26 2.64 1.24 6.58l4.04 3.15c.95-2.83 3.6-4.98 6.72-4.98z"
               />
             </svg>
-            <span>{{ authService.isLoading() ? 'Iniciando...' : 'Continuar con Google' }}</span>
+            <span>{{ authService.isLoading() ? 'Conectando...' : 'Continuar con Google' }}</span>
           </button>
 
           <div class="divider">
-            <span>o alternativas</span>
+            <span>o acceso inmediato</span>
           </div>
 
           <button
@@ -100,7 +98,7 @@ import { FirebaseService } from '../../services/firebase.service';
             (click)="onLoginDemo()"
             [disabled]="authService.isLoading()"
           >
-            🎓 Continuar como Estudiante U (Demo Local)
+            🎓 Ingresar en Modo Demo (Estudiante U)
           </button>
 
           <button
@@ -110,12 +108,12 @@ import { FirebaseService } from '../../services/firebase.service';
             (click)="onContinueGuest()"
             [disabled]="authService.isLoading()"
           >
-            📴 Usar solo en este dispositivo (Sin cuenta)
+            📱 Usar solo en este dispositivo (Sin cuenta)
           </button>
         </div>
 
         <div class="footer-note">
-          <small>Tus datos siempre se guardan primero en tu navegador con IndexedDB.</small>
+          <small>Tus notas se guardan con seguridad local en IndexedDB y se sincronizan vía Firebase.</small>
         </div>
       </div>
     </div>
@@ -127,72 +125,83 @@ import { FirebaseService } from '../../services/firebase.service';
       align-items: center;
       justify-content: center;
       padding: 1.5rem;
-      background: radial-gradient(circle at 50% 10%, rgba(99, 102, 241, 0.15), transparent 70%);
+      background: radial-gradient(circle at 50% 15%, rgba(245, 158, 11, 0.05), transparent 60%),
+                  radial-gradient(circle at 80% 80%, rgba(16, 185, 129, 0.03), transparent 50%),
+                  #0c0d0f;
     }
 
     .login-card {
       width: 100%;
-      max-width: 480px;
-      padding: 2.5rem 2rem;
-      border-radius: 1.5rem;
-      background: rgba(30, 32, 44, 0.85);
-      backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5), 0 0 50px -20px rgba(99, 102, 241, 0.3);
+      max-width: 460px;
+      padding: 2.5rem 2.25rem;
+      border-radius: 20px;
+      background: rgba(20, 21, 24, 0.88);
+      backdrop-filter: blur(24px) saturate(160%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.7), 0 0 1px 1px rgba(255, 255, 255, 0.05);
       text-align: center;
     }
 
     .brand-badge {
-      display: inline-block;
-      padding: 0.25rem 0.75rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0.28rem 0.85rem;
       border-radius: 9999px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      letter-spacing: 0.05em;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
       text-transform: uppercase;
-      background: rgba(99, 102, 241, 0.2);
-      color: #818cf8;
-      border: 1px solid rgba(99, 102, 241, 0.4);
-      margin-bottom: 1rem;
+      background: rgba(245, 158, 11, 0.08);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, 0.22);
+      margin-bottom: 1.25rem;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 8px #10b981;
     }
 
     .brand-icon-wrapper {
-      width: 72px;
-      height: 72px;
-      margin: 0 auto 0.75rem auto;
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 1rem auto;
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 1.25rem;
-      background: linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(168, 85, 247, 0.3));
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      box-shadow: 0 8px 24px -6px rgba(99, 102, 241, 0.4);
+      border-radius: 16px;
+      background: #18191d;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
     }
 
     .brand-icon {
-      font-size: 2.5rem;
+      font-size: 2rem;
     }
 
     .brand-title {
-      font-size: 2rem;
+      font-size: 2.1rem;
       font-weight: 800;
       margin: 0;
-      background: linear-gradient(135deg, #ffffff 40%, #a5b4fc 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: #f4f4f5;
+      letter-spacing: -0.03em;
     }
 
     .brand-subtitle {
-      color: #94a3b8;
-      font-size: 0.95rem;
-      margin-top: 0.25rem;
+      color: #a1a1aa;
+      font-size: 0.92rem;
+      margin-top: 0.35rem;
       margin-bottom: 1.75rem;
     }
 
     .features-list {
       display: flex;
       flex-direction: column;
-      gap: 0.75rem;
+      gap: 0.65rem;
       margin-bottom: 2rem;
       text-align: left;
     }
@@ -200,38 +209,51 @@ import { FirebaseService } from '../../services/firebase.service';
     .feature-item {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.85rem;
       padding: 0.75rem 1rem;
-      border-radius: 0.85rem;
-      background: rgba(255, 255, 255, 0.03);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.025);
       border: 1px solid rgba(255, 255, 255, 0.05);
-      transition: transform 0.2s ease, background 0.2s ease;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .feature-item:hover {
-      background: rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.1);
       transform: translateY(-1px);
     }
 
     .feature-icon {
-      font-size: 1.4rem;
+      font-size: 1.25rem;
       flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.04);
     }
+
+    .feature-emerald { color: #10b981; }
+    .feature-amber { color: #f59e0b; }
+    .feature-titanium { color: #e4e4e7; }
 
     .feature-text {
       display: flex;
       flex-direction: column;
-      font-size: 0.82rem;
-      line-height: 1.3;
+      font-size: 0.8rem;
+      line-height: 1.35;
     }
 
     .feature-text strong {
-      color: #f1f5f9;
-      font-size: 0.88rem;
+      color: #f4f4f5;
+      font-size: 0.86rem;
+      font-weight: 600;
     }
 
     .feature-text span {
-      color: #94a3b8;
+      color: #71717a;
     }
 
     .alert {
@@ -239,16 +261,17 @@ import { FirebaseService } from '../../services/firebase.service';
       align-items: flex-start;
       gap: 0.75rem;
       padding: 0.75rem 1rem;
-      border-radius: 0.75rem;
+      border-radius: 10px;
       margin-bottom: 1.5rem;
       text-align: left;
-      font-size: 0.85rem;
+      font-size: 0.84rem;
+      line-height: 1.4;
     }
 
     .alert-error {
-      background: rgba(239, 68, 68, 0.15);
-      border: 1px solid rgba(239, 68, 68, 0.3);
-      color: #fca5a5;
+      background: rgba(244, 63, 94, 0.1);
+      border: 1px solid rgba(244, 63, 94, 0.25);
+      color: #fda4af;
     }
 
     .auth-actions {
@@ -261,42 +284,46 @@ import { FirebaseService } from '../../services/firebase.service';
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 0.75rem;
+      gap: 0.65rem;
       padding: 0.85rem 1.25rem;
-      border-radius: 0.85rem;
+      border-radius: 12px;
       font-weight: 600;
-      font-size: 0.95rem;
+      font-size: 0.92rem;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
       border: none;
       outline: none;
     }
 
+    .btn:active {
+      transform: scale(0.98);
+    }
+
     .btn:disabled {
-      opacity: 0.6;
+      opacity: 0.5;
       cursor: not-allowed;
     }
 
     .btn-google {
-      background: #ffffff;
-      color: #1e293b;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      background: #f4f4f5;
+      color: #09090b;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
     }
 
     .btn-google:hover:not(:disabled) {
-      background: #f8fafc;
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+      background: #ffffff;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+      transform: translateY(-1px);
     }
 
     .divider {
       display: flex;
       align-items: center;
-      margin: 0.5rem 0;
-      color: #64748b;
-      font-size: 0.75rem;
+      margin: 0.35rem 0;
+      color: #52525b;
+      font-size: 0.72rem;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.06em;
     }
 
     .divider::before,
@@ -304,7 +331,7 @@ import { FirebaseService } from '../../services/firebase.service';
       content: '';
       flex: 1;
       height: 1px;
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.06);
     }
 
     .divider span {
@@ -312,32 +339,34 @@ import { FirebaseService } from '../../services/firebase.service';
     }
 
     .btn-demo {
-      background: rgba(99, 102, 241, 0.2);
-      color: #c7d2fe;
-      border: 1px solid rgba(99, 102, 241, 0.4);
+      background: rgba(245, 158, 11, 0.08);
+      color: #fde68a;
+      border: 1px solid rgba(245, 158, 11, 0.22);
     }
 
     .btn-demo:hover:not(:disabled) {
-      background: rgba(99, 102, 241, 0.35);
+      background: rgba(245, 158, 11, 0.15);
+      border-color: rgba(245, 158, 11, 0.35);
       color: #ffffff;
     }
 
     .btn-guest {
       background: transparent;
-      color: #94a3b8;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      font-size: 0.88rem;
+      color: #a1a1aa;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 0.86rem;
     }
 
     .btn-guest:hover:not(:disabled) {
-      background: rgba(255, 255, 255, 0.05);
-      color: #f1f5f9;
+      background: rgba(255, 255, 255, 0.04);
+      border-color: rgba(255, 255, 255, 0.15);
+      color: #f4f4f5;
     }
 
     .footer-note {
       margin-top: 1.5rem;
-      color: #64748b;
-      font-size: 0.75rem;
+      color: #52525b;
+      font-size: 0.74rem;
     }
   `]
 })

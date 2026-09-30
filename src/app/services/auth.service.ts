@@ -189,6 +189,8 @@ export class AuthService {
         mensaje = 'La ventana de inicio de sesion fue cerrada.';
       } else if (err.code === 'auth/cancelled-popup-request') {
         mensaje = 'Solicitud de autenticacion cancelada.';
+      } else if (err.code === 'auth/configuration-not-found') {
+        mensaje = 'La autenticacion de Google aun no esta activada en tu consola de Firebase. Activala en Authentication > Comenzar > Google > Habilitar. Mientras tanto, puedes ingresar con \"Continuar como Estudiante U\" o \"Sin cuenta\".';
       } else if (err.code === 'auth/api-key-not-valid' || err.code === 'auth/invalid-api-key') {
         mensaje = 'La clave API de Firebase es de prueba o no es valida. Configura tu proyecto real en Configuracion.';
       } else if (err.message) {
@@ -247,3 +249,4 @@ export class AuthService {
     this.isLoading.set(false);
   }
 }
+

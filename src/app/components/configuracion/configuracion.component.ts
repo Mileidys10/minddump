@@ -15,6 +15,7 @@ import { RecordatorioService } from '../../services/recordatorio.service';
 import { AuthService } from '../../services/auth.service';
 import { FirestoreSyncService } from '../../services/firestore-sync.service';
 import { FirebaseService, FirebaseConfig } from '../../services/firebase.service';
+import { BackupService } from '../../services/backup.service';
 import { PermisoNotificacionModalComponent } from './permiso-notificacion-modal.component';
 import { BorrarDatosModalComponent } from './borrar-datos-modal.component';
 import { PwaUpdateBannerComponent } from './pwa-update-banner.component';
@@ -44,8 +45,15 @@ import { PwaUpdateBannerComponent } from './pwa-update-banner.component';
 
       @if (mensajeExitoBorrado()) {
         <div class="alert-success glass" id="alert-borrado-exitoso">
-          <span>✅ Todos los datos han sido borrados con éxito. El espacio de sistema <strong>Útiles</strong> ha sido restaurado limpio.</span>
+          <span>✓ Todos los datos han sido borrados con éxito. El espacio de sistema <strong>Útiles</strong> ha sido restaurado limpio.</span>
           <button type="button" class="btn-close-alert" (click)="mensajeExitoBorrado.set(false)">✕</button>
+        </div>
+      }
+
+      @if (mensajeBackup()) {
+        <div class="alert-success glass" id="alert-backup-feedback">
+          <span>{{ mensajeBackup() }}</span>
+          <button type="button" class="btn-close-alert" (click)="mensajeBackup.set(null)">✕</button>
         </div>
       }
 
@@ -91,7 +99,7 @@ import { PwaUpdateBannerComponent } from './pwa-update-banner.component';
               </div>
 
               <div class="telemetry-pill">
-                <span class="telemetry-icon">{{ syncService.isOnline() ? '🌐' : '📴' }}</span>
+                <span class="telemetry-icon">{{ syncService.isOnline() ? '🟢' : '🔴' }}</span>
                 <span>Red: <strong>{{ syncService.isOnline() ? 'Conectado a Internet' : 'Sin conexión (Modo Offline activo)' }}</strong></span>
               </div>
             </div>
@@ -111,7 +119,7 @@ import { PwaUpdateBannerComponent } from './pwa-update-banner.component';
               [disabled]="syncService.syncStatus() === 'syncing'"
               (click)="onSincronizar()"
             >
-              {{ syncService.syncStatus() === 'syncing' ? '🔄 Sincronizando...' : '⚡ Sincronizar ahora' }}
+              {{ syncService.syncStatus() === 'syncing' ? '🔄 Sincronizando...' : '☁️ Sincronizar ahora' }}
             </button>
 
             @if (authService.currentUser()) {
@@ -140,7 +148,7 @@ import { PwaUpdateBannerComponent } from './pwa-update-banner.component';
               id="btn-toggle-firebase-config"
               (click)="mostrarConfigFirebase.set(!mostrarConfigFirebase())"
             >
-              {{ mostrarConfigFirebase() ? '▲ Ocultar Firebase' : '⚙️ Configurar claves Firebase' }}
+              {{ mostrarConfigFirebase() ? '✕ Ocultar Firebase' : '⚙️ Configurar claves Firebase' }}
             </button>
           </div>
         </section>
@@ -189,6 +197,79 @@ import { PwaUpdateBannerComponent } from './pwa-update-banner.component';
             </div>
           </section>
         }
+
+        <!-- SECCIÓN GUÍA: Acceso en Celular y PC (Multi-dispositivo) -->
+        <section class="config-card glass multi-device-card" id="section-multi-dispositivo">
+          <div class="config-info">
+            <span class="section-tag device-tag">Multi-dispositivo ($0 COP)</span>
+            <h3>¿Cómo usar en Celular y PC?</h3>
+            <p>Sigue estos sencillos pasos para tener exactamente la misma información en tu teléfono y computador:</p>
+
+            <div class="device-steps-grid">
+              <div class="device-step">
+                <span class="step-num">1</span>
+                <div>
+                  <strong>Abre en tu Celular</strong>
+                  <p>Entra a <code>https://minddump-3ec4a.web.app</code> desde Chrome o Safari móvil.</p>
+                </div>
+              </div>
+              <div class="device-step">
+                <span class="step-num">2</span>
+                <div>
+                  <strong>Instala como App (PWA)</strong>
+                  <p>Toca el menú (3 puntos) y selecciona <em>"Instalar aplicación"</em> o <em>"Agregar a pantalla principal"</em>.</p>
+                </div>
+              </div>
+              <div class="device-step">
+                <span class="step-num">3</span>
+                <div>
+                  <strong>Inicia Sesión con Google</strong>
+                  <p>Conecta la misma cuenta en ambos dispositivos para sincronizar en tiempo real y offline.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECCIÓN RESPALDO: Copia de Seguridad Soberana (JSON Sin Nube) -->
+        <section class="config-card glass backup-card" id="section-respaldo-soberano">
+          <div class="config-info">
+            <span class="section-tag backup-tag">Datos Soberanos</span>
+            <h3>Copia de Seguridad y Restauración (JSON)</h3>
+            <p>Descarga un archivo seguro con todas tus notas, tareas, eventos y espacios en tu dispositivo, o restáuralos sin depender de internet ni de la nube.</p>
+
+            <input
+              type="file"
+              #fileInput
+              accept=".json"
+              (change)="onImportarArchivo($event)"
+              style="display: none"
+              id="input-archivo-backup"
+            />
+          </div>
+
+          <div class="config-action backup-actions">
+            <button
+              type="button"
+              class="btn-action"
+              id="btn-exportar-backup"
+              [disabled]="exportando()"
+              (click)="onDescargarRespaldo()"
+            >
+              {{ exportando() ? 'Generando...' : '📥 Descargar Respaldo JSON' }}
+            </button>
+
+            <button
+              type="button"
+              class="btn-action-secondary"
+              id="btn-importar-backup"
+              [disabled]="importando()"
+              (click)="fileInput.click()"
+            >
+              {{ importando() ? 'Restaurando...' : '📤 Restaurar desde Archivo' }}
+            </button>
+          </div>
+        </section>
 
         <!-- SECCIÓN 1: Tema Visual (T-11.1) -->
         <section class="config-card glass" id="section-tema-visual">
@@ -271,7 +352,7 @@ import { PwaUpdateBannerComponent } from './pwa-update-banner.component';
               </button>
             } @else {
               <div class="notif-granted-container">
-                <span class="granted-indicator" id="indicator-alertas-activadas">✔️ Alertas activadas</span>
+                <span class="granted-indicator" id="indicator-alertas-activadas">✓ Alertas activadas</span>
                 <div class="test-notif-buttons">
                   <button
                     type="button"
@@ -280,7 +361,7 @@ import { PwaUpdateBannerComponent } from './pwa-update-banner.component';
                     (click)="onProbarNotificacionInmediata()"
                     title="Envía una notificación de prueba en este instante"
                   >
-                    🧪 Probar ahora
+                    ⚡ Probar ahora
                   </button>
                   <button
                     type="button"
@@ -304,7 +385,7 @@ import { PwaUpdateBannerComponent } from './pwa-update-banner.component';
             <div class="title-with-badge">
               <h3>Estado de la Aplicación PWA</h3>
               <span class="status-badge" [class.success]="isPwaInstalled()" id="badge-estado-pwa">
-                {{ isPwaInstalled() ? '🟢 Instalada como App (Modo Standalone)' : '🌐 Navegador Web (Instalable como PWA)' }}
+                {{ isPwaInstalled() ? '📱 Instalada como App (Modo Standalone)' : '🌐 Navegador Web (Instalable como PWA)' }}
               </span>
             </div>
             <p>MindDump opera de manera completamente autónoma sin conexión a internet mediante Service Worker.</p>
@@ -327,11 +408,11 @@ import { PwaUpdateBannerComponent } from './pwa-update-banner.component';
           <div class="config-info">
             <span class="section-tag">Sistema</span>
             <h3>Información de la Aplicación</h3>
-            <p>Segundo Cerebro Digital desarrollado bajo el Estándar de Fábrica <strong>Google Cloud OKF v0.2</strong>.</p>
+            <p>Segundo Cerebro Digital optimizado para Celular y PC con sincronización en tiempo real.</p>
             <div class="version-meta">
               <span>Stack: Angular 20 Standalone + IndexedDB Dexie + Firebase Cloud Sync</span>
               <span>•</span>
-              <span>Arquitectura: Repositorios & Sincronización Bidireccional</span>
+              <span>Arquitectura: Offline-First & Respaldo Soberano</span>
             </div>
           </div>
           <div class="config-action">
@@ -346,7 +427,7 @@ import { PwaUpdateBannerComponent } from './pwa-update-banner.component';
             <h3 class="danger-title">Borrar Todos los Datos</h3>
             <p>Elimina permanentemente todas las notas, tareas, eventos, recordatorios y espacios de IndexedDB. Requiere doble confirmación.</p>
             <div class="safety-note">
-              🛡️ El espacio predefinido <strong>Útiles</strong> se regenerará automáticamente limpio tras el vaciado.
+              ⚠️ El espacio predefinido <strong>Útiles</strong> se regenerará automáticamente limpio tras el vaciado.
             </div>
           </div>
           <div class="config-action">
@@ -400,6 +481,8 @@ import { PwaUpdateBannerComponent } from './pwa-update-banner.component';
     }
     .section-tag.danger { color: #f43f5e; }
     .section-tag.sync-tag { color: #38bdf8; }
+    .section-tag.backup-tag { color: #10b981; }
+    .section-tag.device-tag { color: #f59e0b; }
     .title-with-badge { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; flex-wrap: wrap; }
     .config-info h3 { font-size: 1.15rem; font-weight: 600; color: var(--text-primary); margin: 0 0 4px 0; }
     .config-info p { font-size: 0.9rem; color: var(--text-secondary); margin: 0 0 8px 0; line-height: 1.4; }
@@ -409,6 +492,55 @@ import { PwaUpdateBannerComponent } from './pwa-update-banner.component';
       border-left: 4px solid #38bdf8;
       background: linear-gradient(135deg, rgba(56, 189, 248, 0.05), rgba(99, 102, 241, 0.05));
     }
+    .multi-device-card {
+      border-left: 4px solid #f59e0b;
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.04), rgba(99, 102, 241, 0.04));
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .device-steps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin-top: 10px;
+    }
+    .device-step {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 12px 14px;
+      border-radius: var(--radius-md, 10px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .step-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #f59e0b;
+      color: #000;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+    .device-step strong { display: block; font-size: 0.9rem; color: var(--text-primary); margin-bottom: 2px; }
+    .device-step p { margin: 0; font-size: 0.82rem; color: var(--text-secondary); }
+    .device-step code { font-size: 0.78rem; background: rgba(0, 0, 0, 0.3); padding: 2px 6px; border-radius: 4px; color: #f59e0b; }
+
+    .backup-card {
+      border-left: 4px solid #10b981;
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.04), rgba(56, 189, 248, 0.04));
+    }
+    .backup-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 210px;
+    }
+
     .user-profile-bar {
       margin: 10px 0 14px 0;
     }
@@ -498,67 +630,42 @@ import { PwaUpdateBannerComponent } from './pwa-update-banner.component';
     .form-group label {
       font-size: 0.78rem;
       color: #94a3b8;
-      font-weight: 600;
     }
     .input-text {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.15);
       padding: 8px 12px;
       border-radius: 6px;
-      background: rgba(0, 0, 0, 0.35);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: #f1f5f9;
-      font-family: monospace;
+      color: var(--text-primary);
       font-size: 0.85rem;
+      font-family: monospace;
     }
     .firebase-action-buttons {
       display: flex;
-      gap: 8px;
-      margin-top: 14px;
+      gap: 10px;
+      margin-top: 16px;
+      flex-wrap: wrap;
     }
     .config-feedback {
       margin-top: 10px;
+      font-size: 0.85rem;
       color: #38bdf8;
-      font-size: 0.82rem;
     }
 
-    .notif-notice {
-      display: flex; gap: 8px; font-size: 0.82rem; color: #93c5fd; background: rgba(59, 130, 246, 0.08);
-      padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(59, 130, 246, 0.2); margin-top: 6px;
-      line-height: 1.4;
-    }
-    .notice-icon { font-size: 1rem; }
-    .denied-alert {
-      margin-top: 8px; font-size: 0.82rem; color: #fca5a5; background: rgba(239, 68, 68, 0.1);
-      padding: 6px 10px; border-radius: 6px; border: 1px solid rgba(239, 68, 68, 0.25);
-    }
-    .safety-note {
-      font-size: 0.82rem; color: #fecdd3; background: rgba(244, 63, 94, 0.06);
-      padding: 6px 10px; border-radius: 6px; border: 1px solid rgba(244, 63, 94, 0.18);
-      display: inline-block; margin-top: 4px;
-    }
-    .version-meta { font-size: 0.8rem; color: var(--text-muted); display: flex; gap: 8px; flex-wrap: wrap; }
-    .theme-selector-group {
-      display: flex; background: rgba(0, 0, 0, 0.25); padding: 4px; border-radius: var(--radius-full);
-      border: 1px solid var(--border-color); gap: 4px;
-    }
-    .btn-theme-toggle {
-      padding: 8px 16px; border-radius: var(--radius-full); font-size: 0.85rem; font-weight: 600;
-      color: var(--text-secondary); border: none; cursor: pointer; transition: all 0.2s;
-    }
-    .btn-theme-toggle.active {
-      background: var(--primary, #6366f1); color: #fff; box-shadow: 0 2px 8px var(--primary-glow);
-    }
     .btn-action {
       padding: 9px 18px; border-radius: 8px; font-size: 0.88rem; font-weight: 600;
       background: var(--primary, #6366f1); color: #fff; border: none; cursor: pointer;
       transition: all 0.2s; white-space: nowrap; text-align: center;
     }
-    .btn-action:hover { background: #4f46e5; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35); }
+    .btn-action:hover:not(:disabled) { background: #4f46e5; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35); }
+    .btn-action:disabled { opacity: 0.6; cursor: not-allowed; }
     .btn-action-secondary {
       padding: 8px 16px; border-radius: 8px; font-size: 0.85rem; font-weight: 600;
       background: rgba(255, 255, 255, 0.08); color: var(--text-primary); border: 1px solid var(--border-color);
       cursor: pointer; transition: all 0.2s; white-space: nowrap; text-align: center;
     }
     .btn-action-secondary:hover:not(:disabled) { background: rgba(255, 255, 255, 0.15); }
+    .btn-action-secondary:disabled { opacity: 0.6; cursor: not-allowed; }
     .granted-indicator {
       font-size: 0.88rem; font-weight: 600; color: #34d399; padding: 6px 14px;
       background: rgba(16, 185, 129, 0.15); border-radius: 999px; border: 1px solid rgba(16, 185, 129, 0.3);
@@ -626,6 +733,7 @@ export class ConfiguracionComponent implements OnInit {
   readonly authService = inject(AuthService);
   readonly syncService = inject(FirestoreSyncService);
   readonly firebaseService = inject(FirebaseService);
+  readonly backupService = inject(BackupService);
   private readonly router = inject(Router);
 
   private readonly appInitService = inject(AppInitService);
@@ -640,6 +748,9 @@ export class ConfiguracionComponent implements OnInit {
   readonly mostrarModalBorrado = signal(false);
   readonly mensajeExitoBorrado = signal(false);
   readonly mensajePruebaNotif = signal<string | null>(null);
+  readonly mensajeBackup = signal<string | null>(null);
+  readonly exportando = signal(false);
+  readonly importando = signal(false);
 
   readonly mostrarConfigFirebase = signal(false);
   readonly mensajeConfigFirebase = signal<string | null>(null);
@@ -666,11 +777,11 @@ export class ConfiguracionComponent implements OnInit {
 
   getSyncStatusLabel(): string {
     switch (this.syncService.syncStatus()) {
-      case 'synced': return '✅ Sincronizado';
+      case 'synced': return '✓ Sincronizado';
       case 'syncing': return '🔄 Sincronizando...';
-      case 'offline': return '📴 Sin conexión (Offline)';
+      case 'offline': return '🔴 Sin conexión (Offline)';
       case 'error': return '⚠️ Error de sincronización';
-      case 'idle': return '⏳ Listo';
+      case 'idle': return '☁️ Listo';
     }
   }
 
@@ -699,13 +810,59 @@ export class ConfiguracionComponent implements OnInit {
     this.router.navigate(['/login']);
   }
 
+  async onDescargarRespaldo(): Promise<void> {
+    try {
+      this.exportando.set(true);
+      const nombreArchivo = await this.backupService.descargarRespaldo();
+      this.mensajeBackup.set(`✓ Respaldo generado y descargado: ${nombreArchivo}`);
+      setTimeout(() => this.mensajeBackup.set(null), 5000);
+    } catch (err: any) {
+      this.mensajeBackup.set(`⚠️ Error al generar respaldo: ${err.message}`);
+    } finally {
+      this.exportando.set(false);
+    }
+  }
+
+  async onImportarArchivo(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) return;
+
+    const file = input.files[0];
+    try {
+      this.importando.set(true);
+      const text = await file.text();
+      const resultado = await this.backupService.restaurarBackup(text);
+
+      if (resultado.exito) {
+        // Recargar datos en servicios
+        await Promise.all([
+          this.inboxService.refresh(),
+          this.notaService.refresh(),
+          this.tareaService.refresh(),
+          this.eventoService.cargarEventos(),
+          this.espacioService.loadAll(),
+          this.recordatorioService.loadAll()
+        ]);
+        this.mensajeBackup.set(`✓ ${resultado.mensaje}`);
+      } else {
+        this.mensajeBackup.set(`⚠️ ${resultado.mensaje}`);
+      }
+      setTimeout(() => this.mensajeBackup.set(null), 6000);
+    } catch (err: any) {
+      this.mensajeBackup.set(`⚠️ Error al leer archivo: ${err.message}`);
+    } finally {
+      this.importando.set(false);
+      input.value = ''; // Limpiar para permitir volver a cargar
+    }
+  }
+
   guardarConfigFirebase(): void {
     const ok = this.firebaseService.saveCustomConfig(this.firebaseConfigForm);
     if (ok) {
-      this.mensajeConfigFirebase.set('✅ Configuración de Firebase guardada con éxito.');
+      this.mensajeConfigFirebase.set('✓ Configuración de Firebase guardada con éxito.');
       setTimeout(() => this.mensajeConfigFirebase.set(null), 4000);
     } else {
-      this.mensajeConfigFirebase.set('❌ Error al aplicar configuración.');
+      this.mensajeConfigFirebase.set('✕ Error al aplicar configuración.');
     }
   }
 

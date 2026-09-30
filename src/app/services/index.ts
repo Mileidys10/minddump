@@ -10,3 +10,4 @@ export * from './ics.service';
 export * from './busqueda.service';
 export * from './tema.service';
 export * from './pwa-update.service';
+export * from './backup.service';

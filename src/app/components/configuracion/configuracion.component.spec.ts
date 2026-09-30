@@ -10,6 +10,7 @@ import { TareaService } from '../../services/tarea.service';
 import { EventoService } from '../../services/evento.service';
 import { EspacioService } from '../../services/espacio.service';
 import { RecordatorioService } from '../../services/recordatorio.service';
+import { BackupService } from '../../services/backup.service';
 import { signal } from '@angular/core';
 
 describe('ConfiguracionComponent (T-11.1 & T-11.2)', () => {
@@ -25,6 +26,7 @@ describe('ConfiguracionComponent (T-11.1 & T-11.2)', () => {
   let eventoServiceSpy: jasmine.SpyObj<EventoService>;
   let espacioServiceSpy: jasmine.SpyObj<EspacioService>;
   let recordatorioServiceSpy: jasmine.SpyObj<RecordatorioService>;
+  let backupServiceSpy: jasmine.SpyObj<BackupService>;
 
   const temaSignal = signal<'dark' | 'light'>('dark');
 
@@ -80,6 +82,9 @@ describe('ConfiguracionComponent (T-11.1 & T-11.2)', () => {
     eventoServiceSpy = jasmine.createSpyObj('EventoService', ['cargarEventos']);
     espacioServiceSpy = jasmine.createSpyObj('EspacioService', ['loadAll']);
     recordatorioServiceSpy = jasmine.createSpyObj('RecordatorioService', ['loadAll']);
+    backupServiceSpy = jasmine.createSpyObj('BackupService', ['descargarRespaldo', 'restaurarBackup']);
+    backupServiceSpy.descargarRespaldo.and.resolveTo('minddump_respaldo_test.json');
+    backupServiceSpy.restaurarBackup.and.resolveTo({ exito: true, totalImportados: 5, detalles: { espacios: 1, inbox: 1, notas: 1, tareas: 1, eventos: 1, recordatorios: 0 }, mensaje: 'OK' });
 
     await TestBed.configureTestingModule({
       imports: [ConfiguracionComponent],
@@ -93,13 +98,24 @@ describe('ConfiguracionComponent (T-11.1 & T-11.2)', () => {
         { provide: TareaService, useValue: tareaServiceSpy },
         { provide: EventoService, useValue: eventoServiceSpy },
         { provide: EspacioService, useValue: espacioServiceSpy },
-        { provide: RecordatorioService, useValue: recordatorioServiceSpy }
+        { provide: RecordatorioService, useValue: recordatorioServiceSpy },
+        { provide: BackupService, useValue: backupServiceSpy }
       ]
     }).compileComponents();
 
     fixture = TestBed.createComponent(ConfiguracionComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+  });
+
+
+  it('debe mostrar la seccion de respaldo y llamar a descargarRespaldo al hacer clic', async () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('#section-respaldo-soberano')).toBeTruthy();
+
+    await component.onDescargarRespaldo();
+    expect(backupServiceSpy.descargarRespaldo).toHaveBeenCalled();
+    expect(component.mensajeBackup()).toContain('minddump_respaldo_test.json');
   });
 
   it('debe crearse correctamente', () => {

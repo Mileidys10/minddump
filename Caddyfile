@@ -1,0 +1,16 @@
+﻿# Caddyfile para MindDump PWA - Auto-HTTPS gratuito con Let''s Encrypt
+# Si tienes subdominio en DuckDNS (ej. minddump-mile.duckdns.org):
+# minddump-mile.duckdns.org {
+#     root * dist/minddump/browser
+#     file_server
+#     try_files {path} /index.html
+#     encode gzip zstd
+# }
+
+# O para servir en todos los puertos locales y publicos del PC:
+:80, :443 {
+    root * dist/minddump/browser
+    file_server
+    try_files {path} /index.html
+    encode gzip zstd
+}

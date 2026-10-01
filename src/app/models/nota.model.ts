@@ -7,7 +7,7 @@ export interface Nota extends SyncableEntity {
   deletedAt?: string | null;
   titulo: string;
   contenido?: string;
-  categoria?: string;
+  categoria?: string | null;
   fechaCreacion: string;
   fechaActualizacion: string;
   espacioId: number | null;

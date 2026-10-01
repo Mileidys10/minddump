@@ -15,7 +15,7 @@ export interface Tarea extends SyncableEntity {
   fechaLimite?: string | null;
   fechaLímite?: string | null; // Alias para compatibilidad con la especificación
   espacioId: number | null;
-  categoria?: string;
+  categoria?: string | null;
   fechaCreacion: string;
   fechaActualizacion: string;
 }

@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { FirestoreSyncService } from './firestore-sync.service';
+import { FirestoreSyncService, sanitizeForFirestore } from './firestore-sync.service';
 import { DatabaseService } from '../repositories/database.service';
 import { AuthService } from './auth.service';
 import { FirebaseService } from './firebase.service';
@@ -81,5 +81,28 @@ describe('FirestoreSyncService (C-03 & E-12)', () => {
 
     const postDelete = await dbService.notas.get(id);
     expect(postDelete).toBeUndefined();
+  });
+  it('debe sanitizar correctamente campos undefined para evitar error de Firestore', () => {
+    const rawData = {
+      titulo: 'Tarea sin categoria',
+      categoria: undefined,
+      descripcion: undefined,
+      espacioId: null,
+      subItems: [1, undefined, 3],
+      metadata: {
+        tag: 'importante',
+        extra: undefined
+      }
+    };
+
+    const sanitized = sanitizeForFirestore(rawData);
+
+    expect('categoria' in sanitized).toBeFalse();
+    expect('descripcion' in sanitized).toBeFalse();
+    expect(sanitized.titulo).toBe('Tarea sin categoria');
+    expect(sanitized.espacioId).toBeNull();
+    expect(sanitized.subItems).toEqual([1, 3]);
+    expect('extra' in sanitized.metadata).toBeFalse();
+    expect(sanitized.metadata.tag).toBe('importante');
   });
 });

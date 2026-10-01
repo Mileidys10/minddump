@@ -121,7 +121,7 @@ export class TareaRepository {
       estado,
       fechaLimite: tarea.fechaLimite ?? tarea.fechaLímite ?? null,
       fechaLímite: tarea.fechaLimite ?? tarea.fechaLímite ?? null,
-      categoria: tarea.categoria ? tarea.categoria.trim() : undefined,
+      categoria: tarea.categoria ? tarea.categoria.trim() : null,
       espacioId: tarea.espacioId ?? null,
       fechaCreacion: ahora,
       fechaActualizacion: ahora
@@ -163,7 +163,7 @@ export class TareaRepository {
       actualizacion.descripcion = cambios.descripcion.trim();
     }
     if (cambios.categoria !== undefined) {
-      actualizacion.categoria = cambios.categoria ? cambios.categoria.trim() : undefined;
+      actualizacion.categoria = cambios.categoria ? cambios.categoria.trim() : null;
     }
     if (cambios.fechaLimite !== undefined || cambios.fechaLímite !== undefined) {
       const fl = cambios.fechaLimite ?? cambios.fechaLímite ?? null;

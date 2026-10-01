@@ -53,7 +53,7 @@ export class NotaRepository {
       deletedAt: null,
       titulo: nota.titulo.trim(),
       contenido: (nota.contenido || '').trim(),
-      categoria: nota.categoria ? nota.categoria.trim() : undefined,
+      categoria: nota.categoria ? nota.categoria.trim() : null,
       espacioId: nota.espacioId ?? null,
       fechaCreacion: ahora,
       fechaActualizacion: ahora
@@ -88,7 +88,7 @@ export class NotaRepository {
       actualizacion.contenido = cambios.contenido.trim();
     }
     if (cambios.categoria !== undefined) {
-      actualizacion.categoria = cambios.categoria ? cambios.categoria.trim() : undefined;
+      actualizacion.categoria = cambios.categoria ? cambios.categoria.trim() : null;
     }
 
     await this.dbService.notas.update(id, actualizacion);

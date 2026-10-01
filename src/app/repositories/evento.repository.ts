@@ -88,7 +88,7 @@ export class EventoRepository {
       deletedAt: null,
       titulo: evento.titulo.trim(),
       descripcion: (evento.descripcion || '').trim(),
-      categoria: evento.categoria ? evento.categoria.trim() : undefined,
+      categoria: evento.categoria ? evento.categoria.trim() : null,
       fechaInicio: evento.fechaInicio,
       fechaFin: evento.fechaFin,
       espacioId: evento.espacioId ?? null,
@@ -133,7 +133,7 @@ export class EventoRepository {
       actualizacion.descripcion = cambios.descripcion.trim();
     }
     if (cambios.categoria !== undefined) {
-      actualizacion.categoria = cambios.categoria ? cambios.categoria.trim() : undefined;
+      actualizacion.categoria = cambios.categoria ? cambios.categoria.trim() : null;
     }
     if (cambios.espacioId !== undefined) {
       actualizacion.espacioId = cambios.espacioId ?? null;

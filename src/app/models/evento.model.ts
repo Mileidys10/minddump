@@ -7,7 +7,7 @@ export interface Evento extends SyncableEntity {
   deletedAt?: string | null;
   titulo: string;
   descripcion?: string;
-  categoria?: string;
+  categoria?: string | null;
   fechaInicio: string;
   fechaFin: string;
   espacioId: number | null;

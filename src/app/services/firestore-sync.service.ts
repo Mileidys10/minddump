@@ -26,6 +26,37 @@ const SYNCABLE_TABLES: SyncableTableName[] = [
   'recordatorios'
 ];
 
+/**
+ * Sanitiza recursivamente un objeto para garantizar compatibilidad con Cloud Firestore.
+ * Firestore rechaza terminantemente valores `undefined` en cualquier campo.
+ * Esta función:
+ * 1. Elimina cualquier propiedad cuyo valor sea `undefined`.
+ * 2. Limpia recursivamente objetos anidados.
+ * 3. Filtra arrays para remover elementos `undefined`.
+ */
+export function sanitizeForFirestore<T>(data: T): T {
+  if (data === null || data === undefined) {
+    return null as any;
+  }
+  if (Array.isArray(data)) {
+    return data
+      .filter(item => item !== undefined)
+      .map(item => sanitizeForFirestore(item)) as any;
+  }
+  if (typeof data === 'object') {
+    const clean: Record<string, any> = {};
+    for (const [key, value] of Object.entries(data)) {
+      if (value !== undefined) {
+        clean[key] = (typeof value === 'object' && value !== null)
+          ? sanitizeForFirestore(value)
+          : value;
+      }
+    }
+    return clean as T;
+  }
+  return data;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -149,7 +180,15 @@ export class FirestoreSyncService {
       const { id, ...cloudData } = item as any;
       cloudData.syncPending = false;
 
-      await setDoc(docRef, cloudData, { merge: true });
+      // Normalizar campos opcionales para evitar retención o errores en merge
+      if (cloudData.categoria === undefined) {
+        cloudData.categoria = null;
+      }
+
+      // Sanitizar datos para Firestore (elimina cualquier campo undefined que Firestore rechaza)
+      const sanitizedData = sanitizeForFirestore(cloudData);
+
+      await setDoc(docRef, sanitizedData, { merge: true });
 
       // Marcar como sincronizado en Dexie
       if (item.id) {

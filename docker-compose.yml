@@ -1,0 +1,15 @@
+﻿services:
+  minddump:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: minddump_pwa
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    networks:
+      - minddump-net
+
+networks:
+  minddump-net:
+    driver: bridge

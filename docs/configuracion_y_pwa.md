@@ -1,7 +1,7 @@
-# ⚙️ Documentación de Arquitectura: Configuración y Gobernanza PWA (T-11.1 & T-11.2)
+# ⚙️ Documentación de Arquitectura: Configuración y Privacidad PWA (T-11.1 & T-11.2)
 
 > **Proyecto**: MindDump MVP  
-> **Estándar**: Google Cloud OKF v0.2  
+> **Arquitectura**: Angular 18 + Ionic PWA (Local-First)  
 > **Módulo**: Configuración del Sistema (`ConfiguracionComponent`)  
 > **Tareas**: T-11.1 (Tema Visual, Permisos, Versión, Borrado Total), T-11.2 (PWA Updates con Service Worker)  
 > **Reglas Clave**: **R-08 ✅** (Notificaciones locales sin backend), **T-01.4 ✅** (Espacio 'Útiles' indestructible).
@@ -40,7 +40,7 @@ La pantalla de Configuración (`src/app/components/configuracion/configuracion.c
 - **Detección**:
   - `window.matchMedia('(display-mode: standalone)').matches` o `(navigator as any).standalone`.
   - Diferencia si se ejecuta como aplicación de escritorio/móvil instalada o como pestaña web estándar.
-- **Información de Versión**: `#badge-version-app` con versión fija `v1.0.0-mvp`, declarando el estándar OKF v0.2 y el stack tecnológico.
+- **Información de Versión**: `#badge-version-app` con versión fija `v1.0.0-mvp`, declarando la versión estable y el stack tecnológico.
 
 ### 2.4 Actualizaciones PWA (T-11.2)
 

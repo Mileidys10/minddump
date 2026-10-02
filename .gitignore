@@ -50,3 +50,10 @@ service_account.json
 
 # Firebase cache
 .firebase/
+
+AGENTS.md
+GEMINI.md
+.agents/
+.gemini/
+contexto/
+obsidian-vault/

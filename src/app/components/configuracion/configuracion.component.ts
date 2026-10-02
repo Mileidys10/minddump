@@ -423,7 +423,7 @@ import { PwaUpdateBannerComponent } from './pwa-update-banner.component';
         <!-- SECCIÓN 5: Zona de Peligro - Borrar Todo (T-11.1) -->
         <section class="config-card glass danger-zone" id="section-borrar-datos">
           <div class="config-info">
-            <span class="section-tag danger">Gobernanza de Datos</span>
+            <span class="section-tag danger">Privacidad de Datos</span>
             <h3 class="danger-title">Borrar Todos los Datos</h3>
             <p>Elimina permanentemente todas las notas, tareas, eventos, recordatorios y espacios de IndexedDB. Requiere doble confirmación.</p>
             <div class="safety-note">

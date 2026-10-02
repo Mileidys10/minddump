@@ -1,7 +1,7 @@
 # 🧠 Documentación de Arquitectura: Dashboard de Inicio (T-10.1, T-10.2 & R-18)
 
 > **Proyecto**: MindDump MVP  
-> **Estándar**: Google Cloud OKF v0.2  
+> **Arquitectura**: Angular 18 + Ionic PWA (Local-First)  
 > **Módulo**: Inicio / Dashboard Principal (`InicioComponent`)  
 > **Tareas**: T-10.1 (Resumen de Información & Modales), T-10.2 (Accesos Rápidos)  
 > **Regla de Alcance**: **R-18 ✅** — Inbox Reciente limitado a exactamente las últimas N=5 capturas.

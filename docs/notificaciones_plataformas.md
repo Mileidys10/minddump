@@ -1,7 +1,7 @@
 # 📱 Comportamiento de Recordatorios y Notificaciones por Plataforma (T-07.3 & T-07.6)
 
 > **Proyecto**: MindDump MVP  
-> **Estándar**: Google Cloud OKF v0.2  
+> **Arquitectura**: Angular 18 + Ionic PWA (Local-First)  
 > **Regla de Alcance**: **R-08 ✅** — Notificaciones locales en app activa o en segundo plano (sin backend externo en MVP).  
 > **Tarea**: **T-07.6 ✅** — Pruebas de notificaciones en dispositivos reales y plataformas.
 

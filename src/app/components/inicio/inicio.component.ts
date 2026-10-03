@@ -441,21 +441,22 @@ import { InboxConvertModalComponent } from '../inbox/inbox-convert-modal.compone
 
     .quick-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-      gap: 14px;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+      gap: 12px;
     }
 
     .quick-card {
-      padding: 16px;
+      padding: 14px 16px;
       border-radius: var(--radius-md, 14px);
       background: var(--bg-surface);
       border: 1px solid var(--border-color);
       box-shadow: var(--shadow-sm);
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
       text-decoration: none;
       transition: all var(--transition-fast, 0.15s ease);
+      min-width: 0;
     }
 
     .quick-card:hover {
@@ -508,12 +509,16 @@ import { InboxConvertModalComponent } from '../inbox/inbox-convert-modal.compone
     /* Columnas de Resumen */
     .dashboard-columns {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1.18fr 0.82fr;
       gap: 24px;
+      align-items: start;
     }
 
-    @media (max-width: 960px) {
-      .dashboard-columns { grid-template-columns: 1fr; }
+    @media (max-width: 1024px) {
+      .dashboard-columns {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
     }
 
     .secondary-columns {
@@ -786,21 +791,21 @@ import { InboxConvertModalComponent } from '../inbox/inbox-convert-modal.compone
 
     /* Estados Vacios Ejecutivos */
     .empty-section-state {
-      padding: 42px 24px;
+      padding: 24px 20px;
       text-align: center;
-      border-radius: var(--radius-lg, 16px);
+      border-radius: var(--radius-md, 12px);
       background: var(--bg-surface);
       border: 1px solid var(--border-color);
       box-shadow: var(--shadow-sm);
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
 
     .empty-icon-wrap {
-      width: 48px;
-      height: 48px;
+      width: 38px;
+      height: 38px;
       border-radius: 50%;
       background: var(--primary-subtle);
       border: 1px solid var(--border-color);
@@ -812,7 +817,7 @@ import { InboxConvertModalComponent } from '../inbox/inbox-convert-modal.compone
     }
 
     .empty-section-state h3 {
-      font-size: 1.02rem;
+      font-size: 0.95rem;
       font-weight: 600;
       color: var(--text-primary, #f4f4f5);
       letter-spacing: -0.01em;
@@ -820,23 +825,23 @@ import { InboxConvertModalComponent } from '../inbox/inbox-convert-modal.compone
     }
 
     .empty-section-state p {
-      font-size: 0.84rem;
+      font-size: 0.82rem;
       color: var(--text-secondary, #a1a1aa);
       margin: 0;
       max-width: 320px;
-      line-height: 1.45;
+      line-height: 1.4;
     }
 
     .empty-action-link {
-      margin-top: 6px;
-      font-size: 0.8rem;
+      margin-top: 4px;
+      font-size: 0.78rem;
       font-weight: 600;
       color: var(--text-primary);
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 8px 16px;
-      border-radius: var(--radius-sm, 8px);
+      padding: 6px 14px;
+      border-radius: var(--radius-full, 9999px);
       background: var(--primary-subtle);
       border: 1px solid var(--border-color);
       text-decoration: none;

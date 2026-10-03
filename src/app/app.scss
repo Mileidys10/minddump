@@ -24,9 +24,10 @@
 
 .sidebar-brand {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: stretch;
   gap: 12px;
-  padding: 0 12px 24px 12px;
+  padding: 0 4px 20px 4px;
   border-bottom: 1px solid var(--border-color);
 }
 
@@ -82,10 +83,10 @@
 }
 
 .nav-item.active {
-  background: rgba(99, 102, 241, 0.15);
-  color: #818cf8;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--primary, #f4f4f5);
   font-weight: 600;
-  border: 1px solid rgba(99, 102, 241, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.14);
 }
 
 .nav-item.active::before {
@@ -165,8 +166,8 @@
 
 .app-content {
   flex: 1;
-  padding: 32px;
-  max-width: 1200px;
+  padding: clamp(16px, 2.5vw, 32px);
+  max-width: 1360px;
   width: 100%;
   margin: 0 auto;
 }
@@ -440,7 +441,6 @@
   align-items: center;
   gap: 8px;
   width: 100%;
-  margin-top: 14px;
   padding: 6px 12px;
   border-radius: var(--radius-full);
   background: rgba(255, 255, 255, 0.03);
